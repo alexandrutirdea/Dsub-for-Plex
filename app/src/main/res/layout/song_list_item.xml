@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+	A track row.
+
+	The duration sits on the title's line, at the right edge. It used to live on the
+	second line with the artist, which on an album's own listing - where the artist
+	line is dropped, because the header already says whose album it is - left the time
+	stranded on a line of its own under the title, right-aligned against nothing.
+
+	So the second line now appears only when there is something to put on it, and the
+	row holds one line of text the rest of the time.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+		android:id="@id/drag_handle"
+		android:orientation="horizontal"
+		android:baselineAligned="false"
+		android:layout_width="fill_parent"
+		android:layout_height="@dimen/SongRow.Height"
+		android:paddingLeft="@dimen/List.Keyline"
+		android:background="?attr/selectableItemBackground">
+
+    <LinearLayout android:orientation="vertical"
+                  android:layout_width="0dip"
+                  android:layout_height="wrap_content"
+                  android:layout_weight="1"
+                  android:layout_gravity="center_vertical">
+
+        <LinearLayout android:orientation="horizontal"
+                      android:layout_width="fill_parent"
+                      android:layout_height="wrap_content"
+					  android:gravity="center_vertical"
+                      android:layout_gravity="center_vertical">
+
+			<!--
+				A column rather than a wrapped label, so titles line up whether the number
+				beside them is one digit or two. Hidden unless track numbers are turned on
+				in Appearance, and then it takes no width at all.
+			-->
+			<TextView
+				android:id="@+id/song_track"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:minWidth="28dp"
+				android:gravity="left|center_vertical"
+				style="@style/ListText.Caption"
+				android:paddingRight="6dip"
+				android:drawablePadding="6dip"/>
+
+            <TextView
+				android:id="@+id/song_title"
+				android:layout_width="0dip"
+				android:layout_height="wrap_content"
+				android:layout_weight="1"
+				style="@style/ListText.Body"
+				android:singleLine="true"
+				android:ellipsize="marquee"
+				android:paddingRight="6dip"
+				android:drawablePadding="6dip"/>
+
+			<!--
+				Loved on Last.fm, according to the dashboard. Not a button: loving is done
+				from Now Playing against the track Plex says is playing, and a row here is
+				often not that track.
+			-->
+			<ImageView
+				android:id="@+id/song_loved"
+				android:layout_width="@dimen/Star.Small"
+				android:layout_height="@dimen/Star.Small"
+				android:layout_gravity="center_vertical"
+				android:scaleType="fitCenter"
+				android:paddingRight="2dip"
+				android:visibility="gone"
+				android:contentDescription="@string/download.loved"/>
+
+			<ImageButton
+				android:id="@+id/song_bookmark"
+				android:layout_width="@dimen/SongStatusIcon"
+				android:layout_height="@dimen/SongStatusIcon"
+				android:background="@null"
+				android:focusable="false"
+				android:scaleType="fitCenter"
+				android:visibility="gone"/>
+
+			<ImageButton
+				android:id="@+id/song_star"
+				android:layout_width="@dimen/Star.Small"
+				android:layout_height="@dimen/Star.Small"
+				android:scaleType="fitCenter"
+				android:background="@null"
+				android:focusable="false"
+				android:visibility="gone"/>
+
+			<ImageButton
+				android:id="@+id/song_played"
+				android:layout_width="@dimen/SongStatusIcon"
+				android:layout_height="@dimen/SongStatusIcon"
+				android:scaleType="fitCenter"
+				android:background="@null"
+				android:focusable="false"
+				android:visibility="gone"/>
+
+            <TextView
+				android:id="@+id/song_status"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				style="@style/ListText.Caption"
+				android:drawablePadding="1dip"
+				android:paddingRight="2dip"/>
+
+			<ImageView
+				android:id="@+id/song_status_icon"
+				android:layout_width="@dimen/SongStatusIcon"
+				android:layout_height="@dimen/SongStatusIcon"
+				android:src="?attr/downloading"
+				android:visibility="gone"/>
+
+			<TextView
+				android:id="@+id/song_suffix"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				style="@style/ListText.Caption"
+				android:singleLine="true"
+				android:paddingLeft="3dip"
+				android:paddingRight="4dip"/>
+
+			<TextView
+				android:id="@+id/song_duration"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				style="@style/ListText.Caption"
+				android:singleLine="true"
+				android:paddingLeft="6dip"/>
+        </LinearLayout>
+
+		<!--
+			Shown only when the artist under the title says something the header does not,
+			or when a rating is on. SongView decides; see setObjectImpl.
+		-->
+        <LinearLayout
+			android:id="@+id/song_bottom"
+			android:orientation="horizontal"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:layout_gravity="center_vertical">
+
+            <TextView
+                    android:id="@+id/song_artist"
+                    android:layout_width="0dip"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_gravity="left|center_vertical"
+                    style="@style/ListText.Caption"
+                    android:singleLine="true"
+                    android:ellipsize="middle"/>
+
+			<RatingBar
+				android:id="@+id/song_rating"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:isIndicator="true"
+				android:layout_centerHorizontal="true"
+				android:numStars="5"
+				style="@android:style/Widget.Holo.RatingBar.Small"
+				android:visibility="gone"/>
+        </LinearLayout>
+    </LinearLayout>
+
+	<!--
+		Whether the track is on the device. Its own view rather than sharing the overflow
+		button's slot the way the old pin did: that left a downloaded track with no visible
+		menu affordance at all, since the pin replaced the dots outright.
+	-->
+	<ImageView
+		android:id="@+id/item_cached"
+		android:layout_width="@dimen/SongStatusIcon"
+		android:layout_height="@dimen/SongStatusIcon"
+		android:layout_gravity="center_vertical"
+		android:layout_marginLeft="4dip"
+		android:layout_marginRight="2dip"
+		android:scaleType="fitCenter"
+		android:contentDescription="@string/song.not_cached"/>
+
+	<ImageView
+		android:id="@+id/item_more"
+		android:src="?attr/download_none"
+		android:layout_width="wrap_content"
+		android:layout_height="fill_parent"
+		android:layout_gravity="right|center_vertical"
+		style="@style/MoreButton"/>
+</LinearLayout>

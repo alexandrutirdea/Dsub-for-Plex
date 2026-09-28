@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+	Now Playing, portrait.
+
+	Every id here is bound by NowPlayingFragment, so the arrangement can change but
+	the ids cannot. The backdrop sits behind everything and is recoloured at runtime
+	from the album art; the transport controls come after the scrubber, closest to
+	the thumb.
+-->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	android:id="@+id/download_layout_container"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent">
+
+	<View
+		android:id="@+id/download_backdrop"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:background="@drawable/np_now_playing_gradient"/>
+
+	<!--
+		The bottom padding lifts the transport row clear of the system navigation
+		bar, which the play button was otherwise pressed right up against. Padding
+		here rather than on download_media_buttons because that layout is shared with
+		landscape, where the vertical space cannot spare it.
+	-->
+	<LinearLayout
+		android:id="@+id/download_layout"
+		android:orientation="vertical"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:paddingBottom="16dp">
+
+		<ViewFlipper
+			android:id="@+id/download_playlist_flipper"
+			android:layout_width="match_parent"
+			android:layout_height="0dip"
+			android:layout_weight="1">
+
+			<LinearLayout
+				android:id="@+id/download_album_art_layout"
+				android:orientation="vertical"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"
+				android:background="@android:color/transparent">
+
+				<!--
+					Leftover height is split between the two spacers rather than all
+					landing between the artwork and the text. Once the cover was inset
+					from the edges it no longer filled the top of the screen, and a
+					single spacer below it left the art marooned at the top with a void
+					underneath. Weighted 2:3, the group sits a little above centre and
+					the gap under the cover stays close to the space around it.
+				-->
+				<Space
+					android:layout_width="match_parent"
+					android:layout_height="0dp"
+					android:layout_weight="2"/>
+
+				<!--
+					Sizing to content rather than to a weight is what keeps the artwork
+					and the text together; the image is square-ish and never taller than
+					the space a phone leaves here.
+				-->
+				<FrameLayout
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:layout_marginTop="2dp">
+
+					<!--
+						Inset from both edges and lifted off the backdrop, so the cover reads
+						as an object sitting on the screen rather than a picture pasted into
+						it. The margins are what give the drop shadow room to fall: the card
+						casts outside its own bounds, and without the inset the parent would
+						clip it away. The bottom margin is the overlay buttons' too, so the
+						two stay flush as the artwork changes size.
+
+						The surface behind the image shows only where a non-square cover
+						letterboxes; a near-black frame is what makes that read as deliberate.
+					-->
+					<com.google.android.material.card.MaterialCardView
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						android:layout_gravity="center"
+						android:layout_marginLeft="20dp"
+						android:layout_marginRight="20dp"
+						android:layout_marginTop="8dp"
+						android:layout_marginBottom="16dp"
+						app:cardCornerRadius="24dp"
+						app:cardElevation="18dp"
+						app:cardBackgroundColor="?attr/modernCardSurface">
+
+						<ImageView
+							android:id="@+id/download_album_art_image"
+							android:contentDescription="@string/download.album_art"
+							android:layout_width="match_parent"
+							android:layout_height="wrap_content"
+							android:adjustViewBounds="true"
+							android:scaleType="fitCenter"/>
+					</com.google.android.material.card.MaterialCardView>
+
+					<!--
+						Margins match the card's so the strip lands on the artwork rather than
+						beside it, and its background carries the same bottom corner radius so
+						it does not square off the corners it sits over.
+					-->
+					<LinearLayout
+						android:id="@+id/download_overlay_buttons"
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						android:layout_gravity="center_horizontal|bottom"
+						android:layout_marginLeft="20dp"
+						android:layout_marginRight="20dp"
+						android:layout_marginBottom="16dp"
+						android:background="@drawable/np_art_overlay"
+						android:visibility="invisible"
+						android:gravity="center"
+						android:orientation="horizontal">
+
+						<ImageButton
+							android:id="@+id/download_rating_bad"
+							android:contentDescription="@string/download.thumbs_down"
+							style="@style/DownloadActionImageButton"
+							android:src="@drawable/ic_action_rating_bad_dark"/>
+
+						<ImageButton
+							android:id="@+id/download_star"
+							android:contentDescription="@string/common.star"
+							style="@style/DownloadActionImageButton"
+							android:src="@drawable/ic_toggle_star_outline_dark"/>
+
+						<ImageButton
+							android:id="@+id/download_playback_speed"
+							android:contentDescription="@string/download.action_playback_speed"
+							style="@style/DownloadActionImageButton"
+							android:src="@drawable/ic_action_playback_speed_dark"/>
+
+						<ImageButton
+							android:id="@+id/download_bookmark"
+							android:contentDescription="@string/download.action_bookmark"
+							style="@style/DownloadActionImageButton"
+							android:src="@drawable/ic_menu_bookmark_dark"/>
+
+						<ImageButton
+							android:id="@+id/download_rating_good"
+							android:contentDescription="@string/download.thumbs_up"
+							style="@style/DownloadActionImageButton"
+							android:src="@drawable/ic_action_rating_good_dark"/>
+					</LinearLayout>
+				</FrameLayout>
+
+				<Space
+					android:layout_width="match_parent"
+					android:layout_height="0dp"
+					android:layout_weight="3"/>
+
+				<!-- Track identity: title, artist, album (year), centred under the art. -->
+				<LinearLayout
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:orientation="vertical"
+					android:gravity="center_horizontal"
+					android:paddingLeft="20dp"
+					android:paddingRight="20dp">
+
+					<!--
+						Long titles wrap and shrink to fit rather than being cut off.
+						Three lines at a 12sp floor is enough for even the worst offenders
+						in a real library - the "A vs. B vs. C (X vs. Y vs. Z)" mashup
+						titles that run past a hundred characters.
+
+						Auto-sizing needs a bounded height to measure against, so the box
+						is fixed and keeps that height whether one line is used or three.
+						That also stops the artist and album below it jumping around as
+						tracks change.
+
+						Two lines rather than three: nearly every title is one line, and at
+						96dp the leftover sat as dead air above and below it. A three-line
+						title still fits, autosizing down to about 16sp to do it - well
+						clear of the 12sp floor.
+					-->
+					<TextView
+						android:id="@+id/download_song_title"
+						android:layout_width="match_parent"
+						android:layout_height="64dp"
+						android:gravity="center"
+						android:maxLines="3"
+						app:autoSizeTextType="uniform"
+						app:autoSizeMinTextSize="12sp"
+						app:autoSizeMaxTextSize="27sp"
+						app:autoSizeStepGranularity="1sp"
+						style="@style/NowPlaying.Title"/>
+
+					<TextView
+						android:id="@+id/download_song_artist"
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						android:gravity="center_horizontal"
+						style="@style/NowPlaying.Artist"/>
+
+					<TextView
+						android:id="@+id/download_status"
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						android:gravity="center_horizontal"
+						android:layout_marginTop="1dp"
+						style="@style/NowPlaying.Album"/>
+
+					<!-- Play count and when it was last heard. -->
+					<TextView
+						android:id="@+id/download_song_stats"
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						android:gravity="center_horizontal"
+						android:layout_marginTop="4dp"
+						style="@style/NowPlaying.Format"/>
+
+					<!-- Codec, bit depth, sample rate and bitrate of the file itself. -->
+					<TextView
+						android:id="@+id/download_song_format"
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						android:gravity="center_horizontal"
+						android:layout_marginTop="3dp"
+						style="@style/NowPlaying.Format"/>
+				</LinearLayout>
+			</LinearLayout>
+
+			<include layout="@layout/download_playlist"/>
+
+			<include layout="@layout/download_lyrics"/>
+
+		</ViewFlipper>
+
+		<include layout="@layout/download_slider"/>
+
+		<include layout="@layout/download_media_buttons"/>
+	</LinearLayout>
+</FrameLayout>

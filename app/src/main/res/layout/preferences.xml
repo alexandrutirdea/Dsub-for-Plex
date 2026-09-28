@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+	Holds the PreferenceFragmentCompat that PreferenceCompatFragment adds as a child
+	fragment. It used to be a bare ListView with @android:id/list, which is what the
+	framework's PreferenceScreen bound itself to; AndroidX brings its own RecyclerView, so
+	all this has to be is somewhere to put it.
+-->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/preferences_container"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent"/>

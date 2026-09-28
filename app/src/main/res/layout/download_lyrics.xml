@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+	The lyrics page of the Now Playing flipper. Lines are added in code so the
+	active one can be restyled and scrolled to as playback moves.
+-->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/download_lyrics_page"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent">
+
+	<ScrollView
+		android:id="@+id/download_lyrics_scroll"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:scrollbars="none"
+		android:paddingLeft="26dp"
+		android:paddingRight="26dp">
+
+		<LinearLayout
+			android:id="@+id/download_lyrics_container"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:orientation="vertical"
+			android:paddingTop="24dp"
+			android:paddingBottom="24dp"/>
+	</ScrollView>
+
+	<TextView
+		android:id="@+id/download_lyrics_empty"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_gravity="center"
+		android:visibility="gone"
+		style="@style/NowPlaying.Album"/>
+</FrameLayout>

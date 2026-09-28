@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+	The primary destinations. Everything else - podcasts, bookmarks, shares, admin,
+	settings - stays in the drawer: a bottom bar only works for a handful of peers,
+	and DSub has a dozen. Five is the most BottomNavigationView will lay out, so this
+	list is full; anything new has to displace something.
+-->
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+	<item
+		android:id="@+id/nav_home"
+		android:icon="@drawable/ic_nav_home"
+		android:title="@string/button_bar.home"/>
+	<item
+		android:id="@+id/nav_library"
+		android:icon="?attr/drawerLibrary"
+		android:title="@string/button_bar.browse"/>
+	<item
+		android:id="@+id/nav_playlists"
+		android:icon="?attr/drawerPlaylists"
+		android:title="@string/button_bar.playlists"/>
+	<item
+		android:id="@+id/nav_collections"
+		android:icon="@drawable/ic_nav_collections"
+		android:title="@string/button_bar.collections"/>
+	<item
+		android:id="@+id/nav_search"
+		android:icon="@drawable/ic_menu_search_dark"
+		android:title="@string/search.label"/>
+</menu>

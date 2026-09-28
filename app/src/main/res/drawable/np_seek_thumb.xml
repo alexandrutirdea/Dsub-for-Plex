@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+	Deliberately tiny. The scrubber reads as a progress line rather than a
+	control, matching the reference design, but stays draggable.
+-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+	android:shape="oval">
+	<solid android:color="?attr/npTrackPlayed"/>
+	<size android:width="10dp" android:height="10dp"/>
+</shape>

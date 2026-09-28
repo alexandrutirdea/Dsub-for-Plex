@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+	A filter's two bounds, typed rather than picked from a list.
+
+	Shared by the mix's length and play-count filters and by the album length filter, which
+	ask the same question in different units, so the labels, the unit beside each field and
+	whether fractions are allowed all come from the caller. Either field can be left blank,
+	which is what lets one dialog say "over", "under" and a window between the two without
+	a direction control that could fall out of step with the numbers.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+	android:orientation="vertical"
+	android:paddingLeft="24dp"
+	android:paddingRight="24dp"
+	android:paddingTop="16dp"
+	android:paddingBottom="8dp">
+
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:orientation="horizontal"
+		android:gravity="center_vertical">
+
+		<TextView
+			android:id="@+id/filter_range_min_label"
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:layout_weight="1"
+			android:textAppearance="?android:attr/textAppearanceMedium"/>
+
+		<EditText
+			android:id="@+id/filter_range_min"
+			android:layout_width="72dp"
+			android:layout_height="wrap_content"
+			android:maxLength="6"
+			android:gravity="end"
+			android:importantForAutofill="no"/>
+
+		<TextView
+			android:id="@+id/filter_range_min_suffix"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginLeft="8dp"
+			android:textColor="?android:textColorSecondary"/>
+	</LinearLayout>
+
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:orientation="horizontal"
+		android:gravity="center_vertical"
+		android:layout_marginTop="8dp">
+
+		<TextView
+			android:id="@+id/filter_range_max_label"
+			android:layout_width="0dp"
+			android:layout_height="wrap_content"
+			android:layout_weight="1"
+			android:textAppearance="?android:attr/textAppearanceMedium"/>
+
+		<EditText
+			android:id="@+id/filter_range_max"
+			android:layout_width="72dp"
+			android:layout_height="wrap_content"
+			android:maxLength="6"
+			android:gravity="end"
+			android:importantForAutofill="no"/>
+
+		<TextView
+			android:id="@+id/filter_range_max_suffix"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginLeft="8dp"
+			android:textColor="?android:textColorSecondary"/>
+	</LinearLayout>
+
+	<TextView
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_marginTop="12dp"
+		android:text="@string/menu.filter_range_hint"
+		android:textAppearance="?android:attr/textAppearanceSmall"
+		android:textColor="?android:textColorSecondary"/>
+</LinearLayout>

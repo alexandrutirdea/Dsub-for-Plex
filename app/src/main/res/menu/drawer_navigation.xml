@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto">
+	<group android:checkableBehavior="single">
+		<item
+			android:id="@+id/drawer_home"
+			android:icon="?attr/drawerHome"
+			android:title="@string/button_bar.home"/>
+		<item
+			android:id="@+id/drawer_library"
+			android:icon="?attr/drawerLibrary"
+			android:title="@string/button_bar.browse"/>
+		<!-- Its own icon: Library and Collections shared the folder and read as the
+		     same destination twice. -->
+		<item
+			android:id="@+id/drawer_collections"
+			android:icon="@drawable/ic_nav_collections"
+			android:title="@string/button_bar.collections"/>
+		<item
+			android:id="@+id/drawer_playlists"
+			android:icon="?attr/drawerPlaylists"
+			android:title="@string/button_bar.playlists"/>
+		<item
+			android:id="@+id/drawer_podcasts"
+			android:icon="?attr/drawerPodcasts"
+			android:title="@string/button_bar.podcasts"/>
+		<item
+			android:id="@+id/drawer_bookmarks"
+			android:icon="?attr/drawerBookmarks"
+			android:title="@string/button_bar.bookmarks"/>
+		<item
+			android:id="@+id/drawer_internet_radio_stations"
+			android:icon="?attr/drawerInternetRadioStations"
+			android:title="@string/button_bar.internet_radio"/>
+		<item
+			android:id="@+id/drawer_shares"
+			android:icon="?attr/drawerShares"
+			android:title="@string/button_bar.shares"/>
+		<item
+			android:id="@+id/drawer_chat"
+			android:icon="?attr/drawerChat"
+			android:title="@string/button_bar.chat"/>
+		<item
+			android:id="@+id/drawer_admin"
+			android:icon="?attr/drawerAdmin"
+			android:title="@string/button_bar.admin"/>
+		<!-- Its own way in, rather than only through Now Playing's menu: the headphone
+		     corrections live on this screen and have nothing to do with what is queued. -->
+		<item
+			android:id="@+id/drawer_equalizer"
+			android:icon="@drawable/ic_nav_equalizer"
+			android:title="@string/equalizer.label"/>
+		<item
+			android:id="@+id/drawer_downloading"
+			android:icon="?attr/drawerDownloading"
+			android:title="@string/button_bar.downloading"
+			android:visible="false"/>
+	</group>
+
+	<group
+		android:id="@+id/drawer_bottom"
+		android:checkableBehavior="single">
+
+		<item android:id="@+id/drawer_offline"
+			  android:title="@string/button_bar.offline"/>
+
+		<item
+			android:id="@+id/drawer_clear_cache"
+			android:title="@string/settings.cache_clear"
+			app:actionLayout="@layout/drawer_cache_size"/>
+
+		<!-- Clear Cache leaves permanent downloads alone; this is the one row that takes them. -->
+		<item
+			android:id="@+id/drawer_delete_permanent_cache"
+			android:title="@string/settings.cache_delete_permanent"
+			app:actionLayout="@layout/drawer_cache_size"/>
+
+		<item
+			android:id="@+id/drawer_downloaded_albums"
+			android:title="@string/main.albums_downloaded"/>
+
+		<item
+			android:id="@+id/drawer_settings"
+			android:title="@string/menu.settings"/>
+	</group>
+</menu>

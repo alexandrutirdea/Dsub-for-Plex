@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+	The Home screen: rows of actual artwork, then shortcut tiles for the album lists.
+	The artwork leads because it is what there is to choose from; the tiles are
+	navigation, and navigation belongs after the content it competes with.
+
+	The rows are plain HorizontalScrollViews filled in code rather than RecyclerViews -
+	each holds thirty items at most, so an adapter and its view recycling would cost
+	more than it saves.
+-->
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/home_scroll"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:fillViewport="true"
+	android:scrollbars="none">
+
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:orientation="vertical"
+		android:paddingBottom="20dp">
+
+		<!--
+			Leads the screen because it is the one row the user chose themselves: a
+			collection they are working through, filtered how they filtered it. Gone
+			until a collection is picked, which is how it starts out.
+		-->
+		<TextView
+			android:id="@+id/home_focused_header"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:text="@string/main.albums_focused"
+			android:visibility="gone"
+			style="@style/Home.SectionHeader"/>
+
+		<HorizontalScrollView
+			android:id="@+id/home_focused_scroll"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:paddingLeft="14dp"
+			android:paddingRight="14dp"
+			android:clipToPadding="false"
+			android:scrollbars="none"
+			android:visibility="gone">
+
+			<LinearLayout
+				android:id="@+id/home_focused_row"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:orientation="horizontal"/>
+		</HorizontalScrollView>
+
+		<TextView
+			android:id="@+id/home_recommended_header"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:text="@string/main.albums_recommended"
+			android:visibility="gone"
+			style="@style/Home.SectionHeader"/>
+
+		<HorizontalScrollView
+			android:id="@+id/home_recommended_scroll"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:paddingLeft="14dp"
+			android:paddingRight="14dp"
+			android:clipToPadding="false"
+			android:scrollbars="none"
+			android:visibility="gone">
+
+			<LinearLayout
+				android:id="@+id/home_recommended_row"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:orientation="horizontal"/>
+		</HorizontalScrollView>
+
+		<TextView
+			android:id="@+id/home_short_header"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:text="@string/main.albums_short"
+			android:visibility="gone"
+			style="@style/Home.SectionHeader"/>
+
+		<HorizontalScrollView
+			android:id="@+id/home_short_scroll"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:paddingLeft="14dp"
+			android:paddingRight="14dp"
+			android:clipToPadding="false"
+			android:scrollbars="none"
+			android:visibility="gone">
+
+			<LinearLayout
+				android:id="@+id/home_short_row"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:orientation="horizontal"/>
+		</HorizontalScrollView>
+
+		<TextView
+			android:id="@+id/home_recent_header"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:text="@string/main.albums_recent"
+			android:visibility="gone"
+			style="@style/Home.SectionHeader"/>
+
+		<HorizontalScrollView
+			android:id="@+id/home_recent_scroll"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:paddingLeft="14dp"
+			android:paddingRight="14dp"
+			android:clipToPadding="false"
+			android:scrollbars="none"
+			android:visibility="gone">
+
+			<LinearLayout
+				android:id="@+id/home_recent_row"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:orientation="horizontal"/>
+		</HorizontalScrollView>
+
+		<!--
+			Everything on the phone in full, read off the music folder: the one row that
+			still has something in it offline. The drawer's Downloaded albums item opens
+			Home scrolled to it.
+		-->
+		<TextView
+			android:id="@+id/home_downloaded_header"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:text="@string/main.albums_downloaded"
+			android:visibility="gone"
+			style="@style/Home.SectionHeader"/>
+
+		<HorizontalScrollView
+			android:id="@+id/home_downloaded_scroll"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:paddingLeft="14dp"
+			android:paddingRight="14dp"
+			android:clipToPadding="false"
+			android:scrollbars="none"
+			android:visibility="gone">
+
+			<LinearLayout
+				android:id="@+id/home_downloaded_row"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:orientation="horizontal"/>
+		</HorizontalScrollView>
+
+		<TextView
+			android:id="@+id/home_newest_header"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:text="@string/main.albums_newest"
+			android:visibility="gone"
+			style="@style/Home.SectionHeader"/>
+
+		<HorizontalScrollView
+			android:id="@+id/home_newest_scroll"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:paddingLeft="14dp"
+			android:paddingRight="14dp"
+			android:clipToPadding="false"
+			android:scrollbars="none"
+			android:visibility="gone">
+
+			<LinearLayout
+				android:id="@+id/home_newest_row"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:orientation="horizontal"/>
+		</HorizontalScrollView>
+
+		<TextView
+			android:id="@+id/home_playlist_header"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:text="@string/playlist.label"
+			android:visibility="gone"
+			style="@style/Home.SectionHeader"/>
+
+		<HorizontalScrollView
+			android:id="@+id/home_playlist_scroll"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:paddingLeft="14dp"
+			android:paddingRight="14dp"
+			android:clipToPadding="false"
+			android:scrollbars="none"
+			android:visibility="gone">
+
+			<LinearLayout
+				android:id="@+id/home_playlist_row"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:orientation="horizontal"/>
+		</HorizontalScrollView>
+
+		<GridLayout
+			android:id="@+id/home_tiles"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:columnCount="2"
+			android:paddingLeft="10dp"
+			android:paddingRight="10dp"
+			android:paddingTop="18dp"/>
+	</LinearLayout>
+</ScrollView>

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:layout_weight="1">
+			
+	<View
+        android:layout_width="fill_parent"
+        android:layout_height="1px"
+        android:background="?attr/colorPrimary"/>
+
+    <!--
+        How long the queue still runs and when it finishes. Here rather than in the
+        toolbar subtitle, which truncates it once the title and action icons have taken
+        their share. Gone whenever the finishing time cannot be worked out.
+    -->
+    <TextView
+        android:id="@+id/download_queue_summary"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:textSize="12sp"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:textColor="?android:textColorSecondary"
+        android:visibility="gone"/>
+
+    <TextView
+        android:id="@+id/download_empty"
+        android:text="@string/download.empty"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dip"
+        android:textColor="?android:textColorPrimary"/>
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="0dip"
+        android:layout_weight="1.0">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/download_list"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:scrollbars="vertical"
+            android:paddingRight="@dimen/FastScroller.LeftAlignedMargin"
+            android:layout_marginRight="@dimen/FastScroller.NormalBarMargin"/>
+
+        <github.daneren2005.dsub.view.FastScroller
+            android:id="@+id/download_fast_scroller"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_alignParentRight="true"/>
+    </RelativeLayout>
+
+</LinearLayout>

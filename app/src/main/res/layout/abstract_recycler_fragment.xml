@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	android:id="@+id/refresh_layout"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent">
+
+	<LinearLayout
+		android:id="@+id/fragment_list_layout"
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent"
+		android:orientation="vertical" >
+
+		<!--
+			Filters a long list by name. Shown on the collection and playlist lists, each
+			of which sets its own hint; gone everywhere else. With well over a hundred
+			collections, scrolling to "Essential Jangle Pop" is the slow way.
+		-->
+		<androidx.appcompat.widget.AppCompatEditText
+			android:id="@+id/list_filter"
+			android:layout_width="fill_parent"
+			android:layout_height="46dp"
+			android:layout_marginLeft="12dp"
+			android:layout_marginRight="12dp"
+			android:layout_marginTop="10dp"
+			android:background="?attr/collectionFieldBackground"
+			android:drawablePadding="8dp"
+			app:drawableStartCompat="@drawable/ic_collection_search"
+			android:imeOptions="actionSearch|flagNoExtractUi"
+			android:inputType="text"
+			android:maxLines="1"
+			android:paddingLeft="12dp"
+			android:paddingRight="12dp"
+			android:textColor="?android:textColorPrimary"
+			android:textColorHint="#8E8E93"
+			android:textSize="15sp"
+			android:visibility="gone"/>
+
+		<!--
+			Collection playback actions. Gone on every other screen; SelectDirectoryFragment
+			shows it only inside a Plex collection. It sits above the list rather than in the
+			list header so the autoplay toggle cannot scroll out of reach while it is on.
+		-->
+		<LinearLayout
+			android:id="@+id/collection_action_bar"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:orientation="horizontal"
+			android:gravity="center_vertical"
+			android:baselineAligned="false"
+			android:paddingLeft="12dp"
+			android:paddingRight="12dp"
+			android:paddingTop="10dp"
+			android:paddingBottom="6dp"
+			android:visibility="gone">
+
+			<androidx.appcompat.widget.AppCompatTextView
+				android:id="@+id/collection_random_button"
+				style="@style/CollectionActionButton"
+				android:layout_width="0dp"
+				android:layout_height="46dp"
+				android:layout_weight="1"
+				android:layout_marginRight="8dp"
+				app:drawableStartCompat="@drawable/ic_collection_random"
+				android:text="@string/menu.collection_random_album"/>
+
+			<androidx.appcompat.widget.AppCompatTextView
+				android:id="@+id/collection_autoplay_button"
+				style="@style/CollectionActionButton"
+				android:layout_width="0dp"
+				android:layout_height="46dp"
+				android:layout_weight="1"
+				app:drawableStartCompat="@drawable/ic_collection_autoplay"
+				android:text="@string/menu.collection_autoplay"/>
+		</LinearLayout>
+
+		<!--
+			Collection filter pills: rest time and album length. Shown alongside the action
+			bar inside a collection. Each drives the same browse filter as the overflow
+			menu and inverts when it is holding a value, so an active filter is obvious.
+		-->
+		<LinearLayout
+			android:id="@+id/collection_filter_bar"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:orientation="horizontal"
+			android:gravity="center_vertical"
+			android:baselineAligned="false"
+			android:paddingLeft="12dp"
+			android:paddingRight="12dp"
+			android:paddingTop="4dp"
+			android:paddingBottom="6dp"
+			android:visibility="gone">
+
+			<androidx.appcompat.widget.AppCompatTextView
+				android:id="@+id/collection_rested_button"
+				style="@style/CollectionFilterChip"
+				android:layout_width="0dp"
+				android:layout_height="46dp"
+				android:layout_weight="1"
+				android:layout_marginRight="8dp"
+				app:drawableStartCompat="@drawable/ic_mix_rested"
+				android:text="@string/menu.filter_rested_off"/>
+
+			<androidx.appcompat.widget.AppCompatTextView
+				android:id="@+id/collection_duration_button"
+				style="@style/CollectionFilterChip"
+				android:layout_width="0dp"
+				android:layout_height="46dp"
+				android:layout_weight="1"
+				app:drawableStartCompat="@drawable/ic_collection_length"
+				android:text="@string/menu.filter_duration_off"/>
+		</LinearLayout>
+
+		<!--
+			Playlist "mix" actions. Gone everywhere except a playlist. Laid out in pairs
+			because pills carrying icons and a count do not fit more than two across a
+			phone: four settings say which tracks are in play (rested long enough, played
+			often enough, the right length) and how to order them, and the one button that
+			consumes them takes the last row on its own - it is the only thing here that
+			does anything, and a full-width pill says so without needing to be louder.
+			Above the list for the same reason as the collection bar - the controls stay
+			put while tracks scroll.
+		-->
+		<LinearLayout
+			android:id="@+id/playlist_action_bar"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:orientation="vertical"
+			android:paddingLeft="12dp"
+			android:paddingRight="12dp"
+			android:paddingTop="10dp"
+			android:paddingBottom="6dp"
+			android:visibility="gone">
+
+			<LinearLayout
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:orientation="horizontal"
+				android:gravity="center_vertical"
+				android:baselineAligned="false">
+
+				<androidx.appcompat.widget.AppCompatTextView
+					android:id="@+id/playlist_rested_button"
+					style="@style/CollectionFilterChip"
+					android:layout_width="0dp"
+					android:layout_height="46dp"
+					android:layout_weight="1"
+					android:layout_marginRight="8dp"
+					app:drawableStartCompat="@drawable/ic_mix_rested"
+					android:text="@string/menu.playlist_mix_rested_off"/>
+
+				<androidx.appcompat.widget.AppCompatTextView
+					android:id="@+id/playlist_plays_button"
+					style="@style/CollectionFilterChip"
+					android:layout_width="0dp"
+					android:layout_height="46dp"
+					android:layout_weight="1"
+					app:drawableStartCompat="@drawable/ic_mix_plays"
+					android:text="@string/menu.playlist_mix_plays_off"/>
+			</LinearLayout>
+
+			<LinearLayout
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:orientation="horizontal"
+				android:gravity="center_vertical"
+				android:baselineAligned="false"
+				android:layout_marginTop="8dp">
+
+				<androidx.appcompat.widget.AppCompatTextView
+					android:id="@+id/playlist_length_button"
+					style="@style/CollectionFilterChip"
+					android:layout_width="0dp"
+					android:layout_height="46dp"
+					android:layout_weight="1"
+					android:layout_marginRight="8dp"
+					app:drawableStartCompat="@drawable/ic_collection_length"
+					android:text="@string/menu.playlist_mix_length_off"/>
+
+				<androidx.appcompat.widget.AppCompatTextView
+					android:id="@+id/playlist_gap_button"
+					style="@style/CollectionFilterChip"
+					android:layout_width="0dp"
+					android:layout_height="46dp"
+					android:layout_weight="1"
+					app:drawableStartCompat="@drawable/ic_mix_gap"
+					android:text="@string/menu.playlist_mix_gap_off"/>
+			</LinearLayout>
+
+			<LinearLayout
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:orientation="horizontal"
+				android:gravity="center_vertical"
+				android:baselineAligned="false"
+				android:layout_marginTop="8dp">
+
+				<androidx.appcompat.widget.AppCompatTextView
+					android:id="@+id/playlist_shuffle_button"
+					style="@style/CollectionActionButton"
+					android:layout_width="0dp"
+					android:layout_height="46dp"
+					android:layout_weight="1"
+					android:layout_marginRight="8dp"
+					app:drawableStartCompat="@drawable/ic_mix_shuffle"
+					android:text="@string/menu.playlist_mix_shuffle"/>
+
+				<androidx.appcompat.widget.AppCompatTextView
+					android:id="@+id/playlist_flow_button"
+					style="@style/CollectionActionButton"
+					android:layout_width="0dp"
+					android:layout_height="46dp"
+					android:layout_weight="1"
+					app:drawableStartCompat="@drawable/ic_mix_flow"
+					android:text="@string/menu.playlist_mix_flow"/>
+			</LinearLayout>
+		</LinearLayout>
+
+		<RelativeLayout
+			android:layout_width="fill_parent"
+			android:layout_height="0dip"
+			android:layout_weight="1.0">
+
+			<androidx.recyclerview.widget.RecyclerView
+				android:id="@+id/fragment_recycler"
+				android:layout_width="fill_parent"
+				android:layout_height="fill_parent"
+				android:scrollbars="vertical"
+				android:paddingRight="@dimen/FastScroller.LeftAlignedMargin"
+				android:layout_marginRight="@dimen/FastScroller.NormalBarMargin"
+				android:scrollbarStyle="outsideOverlay"/>
+
+			<github.daneren2005.dsub.view.FastScroller
+				android:id="@+id/fragment_fast_scroller"
+				android:layout_width="wrap_content"
+				android:layout_height="fill_parent"
+				android:layout_alignParentRight="true"/>
+		</RelativeLayout>
+
+		<include layout="@layout/tab_progress" />
+	</LinearLayout>
+</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

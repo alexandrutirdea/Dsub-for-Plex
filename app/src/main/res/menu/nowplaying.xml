@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+	  xmlns:compat="http://schemas.android.com/apk/res-auto"
+	  android:checkableBehavior="all">
+
+    <item
+        android:id="@+id/menu_shuffle"
+        android:icon="?attr/shuffle"
+        android:title="@string/download.menu_shuffle"
+        compat:showAsAction="ifRoom|withText"/>
+
+	<item
+		android:id="@+id/menu_mediaroute"
+		compat:actionProviderClass="androidx.mediarouter.app.MediaRouteActionProvider"
+		compat:actionViewClass="androidx.mediarouter.app.MediaRouteButton"
+		compat:showAsAction="always"
+		android:title="@string/menu.cast"/>
+		
+	<item
+		android:id="@+id/menu_love"
+		android:icon="@drawable/ic_love_outline"
+		android:title="@string/download.love"
+		compat:showAsAction="always"/>
+
+	<!--
+		Acts on whatever is playing rather than on a queue row. The queue's own context
+		menu carries the same id for the row you long-pressed; menuItemSelected falls back
+		to the current song when it is handed none, which is what the options menu does.
+	-->
+	<item
+		android:id="@+id/menu_show_album"
+		android:title="@string/download.menu_show_album"
+		compat:showAsAction="never"/>
+
+	<item
+		android:id="@+id/menu_show_artist"
+		android:title="@string/menu.show_artist"
+		compat:showAsAction="never"/>
+
+	<item
+		android:id="@+id/menu_lyrics_synced"
+		android:title="@string/download.menu_lyrics_synced"
+		compat:showAsAction="never"/>
+
+	<item
+        android:id="@+id/menu_remove_all"
+        android:icon="?attr/remove"
+        android:title="@string/download.menu_remove_all"
+        compat:showAsAction="ifRoom|withText"/>
+
+    <item
+        android:id="@+id/menu_save_playlist"
+        android:icon="?attr/save"
+        android:title="@string/download.menu_save"
+        compat:showAsAction="ifRoom|withText"/>
+
+	<item
+		android:id="@+id/menu_equalizer"
+		android:title="@string/equalizer.label"
+		android:checkable="true"/>
+
+	<item
+		android:id="@+id/menu_batch_mode"
+		android:title="@string/download.batch_mode"
+		android:checkable="true"/>
+
+    <item
+        android:id="@+id/menu_screen_on_off"
+        android:title="@string/download.menu_screen_on"
+		android:checkable="true"/>
+
+	<item
+		android:id="@+id/menu_remove_played"
+		android:title="@string/download.menu_remove_played_songs"
+		android:checkable="true"/>
+		
+	<item
+        android:id="@+id/menu_toggle_timer"
+        android:title="@string/download.start_timer"/>
+
+	<item
+		android:id="@+id/menu_exit"
+		android:title="@string/menu.exit"/>
+</menu>

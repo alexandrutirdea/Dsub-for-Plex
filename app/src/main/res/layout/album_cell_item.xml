@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<github.daneren2005.dsub.view.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:layout_margin="2dp">
+
+	<LinearLayout
+		android:orientation="vertical"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:background="?attr/selectableItemBackground">
+
+		<RelativeLayout
+			android:layout_width="match_parent"
+			android:layout_height="0dp"
+			android:layout_weight="1">
+
+			<github.daneren2005.dsub.view.SquareImageView
+				android:id="@+id/album_coverart"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"/>
+
+			<!--
+				The disc under the overflow button, drawn separately so the button keeps the
+				borderless ripple its style gives it. Aligned to all four of the button's
+				edges and inset, so it stays a circle centred on the button whatever size
+				the icon and its touch padding come out at.
+			-->
+			<View
+				android:id="@+id/album_more_scrim"
+				android:layout_width="0dp"
+				android:layout_height="0dp"
+				android:layout_alignTop="@+id/item_more"
+				android:layout_alignBottom="@+id/item_more"
+				android:layout_alignStart="@+id/item_more"
+				android:layout_alignEnd="@+id/item_more"
+				android:layout_margin="7dp"
+				android:background="@drawable/album_cell_more_scrim"/>
+
+			<!--
+				Over the cover rather than beside the title, which is where it used to sit.
+				Its 48dp of touch target and the cloud's 24dp took 74dp out of a row about
+				190dp wide, leaving the title eleven characters a line - so a cell two lines
+				deep still cut half the albums short. Up here it costs the text nothing.
+
+				Always the light-on-dark icon, whatever the theme: it sits on the scrim
+				above, not on the card.
+			-->
+			<ImageView
+				android:id="@+id/item_more"
+				android:src="@drawable/download_none_dark"
+				android:layout_width="@dimen/TouchTarget.Min"
+				android:layout_height="@dimen/TouchTarget.Min"
+				android:scaleType="center"
+				android:layout_alignParentTop="true"
+				android:layout_alignParentEnd="true"
+				android:layout_alignParentRight="true"
+				style="@style/MoreButton"/>
+
+			<!--
+				Whether the album is on the device. See song_list_item for why it is its own
+				view. Up on the cover with the overflow button, and for the same reason: it
+				is invisible rather than gone whenever the album is not downloaded, which is
+				nearly always, so beside the artist it spent 26dp saying nothing - enough to
+				cut a name like "Thelonious Monk Quartet" short even after the label had
+				shrunk itself as far as it would go.
+
+				Carries the disc as its own background rather than as a view behind it, so
+				the two disappear together; a scrim of its own would sit there as a dark
+				spot on every cover that has no cloud to put on it.
+			-->
+			<ImageView
+				android:id="@+id/item_cached"
+				android:layout_width="@dimen/AlbumCell.OverlayIcon"
+				android:layout_height="@dimen/AlbumCell.OverlayIcon"
+				android:layout_alignParentTop="true"
+				android:layout_alignParentStart="true"
+				android:layout_alignParentLeft="true"
+				android:layout_margin="7dp"
+				android:padding="5dp"
+				android:background="@drawable/album_cell_more_scrim"
+				android:scaleType="fitCenter"
+				android:contentDescription="@string/song.not_cached"/>
+
+			<RatingBar
+				android:id="@+id/album_rating"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:isIndicator="true"
+				android:layout_centerHorizontal="true"
+				android:numStars="5"
+				style="@android:style/Widget.Holo.RatingBar.Small"
+				android:layout_alignParentBottom="true"
+				android:visibility="gone"/>
+		</RelativeLayout>
+
+		<LinearLayout
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:orientation="vertical"
+			android:paddingTop="4dp"
+			android:paddingBottom="4dp"
+			android:paddingLeft="2dp">
+
+			<!--
+				Two lines, always exactly two, and sized to fit them.
+
+				Fixed at two rather than up to two so every cell in a row is the same
+				height: the cover above it is weighted, so a title that wrapped where its
+				neighbour's did not would leave the two covers visibly different sizes.
+				Short titles pay a blank line for that, which is the cheaper of the two.
+
+				A long title steps down a point or two rather than losing its end - the
+				step is small enough that a row of cells still reads as one row, and the
+				alternative is an album whose name stops halfway through. Ellipsized at
+				the end all the same, for the titles that no size would fit.
+			-->
+			<androidx.appcompat.widget.AppCompatTextView
+				android:id="@+id/album_title"
+				android:layout_width="match_parent"
+				android:layout_height="@dimen/AlbumCell.TitleHeight"
+				android:textAppearance="?android:attr/textAppearanceSmall"
+				android:lines="2"
+				android:gravity="top"
+				android:ellipsize="end"
+				app:autoSizeTextType="uniform"
+				app:autoSizeMinTextSize="10sp"
+				app:autoSizeMaxTextSize="14sp"
+				app:autoSizeStepGranularity="1sp"
+				android:text="@string/search.albums"
+				android:textColor="?android:textColorPrimary"
+				android:paddingLeft="@dimen/Card.TextLeftPadding"/>
+
+			<LinearLayout
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:gravity="center_vertical">
+
+				<!-- Sized to fit for the same reason as the title, down to 9sp. -->
+				<androidx.appcompat.widget.AppCompatTextView
+					android:id="@+id/album_artist"
+					android:layout_width="0dp"
+					android:layout_weight="1"
+					android:layout_height="@dimen/AlbumCell.ArtistHeight"
+					android:textColor="?android:textColorSecondary"
+					android:maxLines="1"
+					android:gravity="center_vertical"
+					android:ellipsize="end"
+					app:autoSizeTextType="uniform"
+					app:autoSizeMinTextSize="9sp"
+					app:autoSizeMaxTextSize="12sp"
+					app:autoSizeStepGranularity="1sp"
+					android:text="@string/search.artists"
+					android:paddingLeft="@dimen/Card.TextLeftPadding"/>
+
+				<!-- Gone unless the album is starred, so it costs the name nothing until then. -->
+				<ImageButton
+					android:id="@+id/album_star"
+					android:layout_width="@dimen/Star.Small"
+					android:layout_height="@dimen/Star.Small"
+					android:scaleType="fitCenter"
+					android:layout_gravity="center_vertical"
+					android:layout_marginRight="2dip"
+					android:background="@android:color/transparent"
+					android:focusable="false"
+					android:visibility="gone"/>
+			</LinearLayout>
+		</LinearLayout>
+
+	</LinearLayout>
+</github.daneren2005.dsub.view.CardView>

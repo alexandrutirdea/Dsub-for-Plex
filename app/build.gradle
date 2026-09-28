@@ -1,0 +1,93 @@
+apply plugin: 'com.android.application'
+
+android {
+	namespace 'github.daneren2005.dsub'
+	compileSdk 36
+
+	defaultConfig {
+		applicationId "github.daneren2005.dsub"
+		minSdk 21
+		targetSdk 36
+		versionCode 209
+		versionName '6.0.0'
+		setProperty("archivesBaseName", "DSub $versionName")
+		resourceConfigurations += ["de", "es", "fr", "hu", "nl", "pt-rPT", "ru", "sv", "zh"]
+		vectorDrawables.useSupportLibrary = true
+		resValue 'string', 'account_type.subsonic', applicationId + ".subsonic"
+		resValue 'string', 'provider.search', applicationId + ".provider.DSubSearchProvider"
+		resValue 'string', 'provider.playlist', applicationId + ".playlists.provider"
+		resValue 'string', 'provider.podcast', applicationId + ".podcasts.provider"
+		resValue 'string', 'provider.starred', applicationId + ".starred.provider"
+		resValue 'string', 'provider.recently_added', applicationId + ".mostrecent.provider"
+	}
+
+	signingConfigs {
+		debug {
+			storeFile file('../debug.keystore')
+		}
+	}
+
+	buildTypes {
+		debug {
+			signingConfig signingConfigs.debug
+		}
+		release {
+			minifyEnabled true
+			shrinkResources true
+			proguardFiles 'proguard.cfg'
+		}
+	}
+
+	testOptions {
+		// Code under test logs through android.util.Log, which is a stub on the JVM and
+		// throws rather than doing nothing. Returning defaults lets a plain unit test call
+		// into it without the test having to route around every log line.
+		unitTests.returnDefaultValues = true
+	}
+
+	buildFeatures {
+		buildConfig true
+	}
+
+	compileOptions {
+		sourceCompatibility JavaVersion.VERSION_17
+		targetCompatibility JavaVersion.VERSION_17
+	}
+
+	packaging {
+		resources {
+			excludes += ['META-INF/beans.xml']
+		}
+	}
+
+	lint {
+		checkReleaseBuilds false
+		abortOnError false
+	}
+}
+
+dependencies {
+	implementation fileTree(include: ['*.jar'], dir: 'libs')
+
+	testImplementation 'junit:junit:4.13.2'
+
+	implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+	implementation 'androidx.appcompat:appcompat:1.7.0'
+	implementation 'androidx.mediarouter:mediarouter:1.7.0'
+	implementation 'androidx.recyclerview:recyclerview:1.3.2'
+	implementation 'androidx.preference:preference:1.2.1'
+	implementation 'com.google.android.material:material:1.12.0'
+	implementation 'androidx.palette:palette:1.0.0'
+
+	// The audio engine behind the "ExoPlayer" setting. media3-exoplayer pulls in
+	// media3-common and media3-datasource, both of which are used directly here.
+	implementation 'androidx.media3:media3-exoplayer:1.8.1'
+	implementation 'androidx.media3:media3-datasource:1.8.1'
+	implementation 'androidx.media3:media3-common:1.8.1'
+
+	implementation 'de.hdodenhof:circleimageview:3.1.0'
+
+	// Unmaintained; rewritten to AndroidX by Jetifier (see gradle.properties).
+	implementation 'com.sothree.slidinguppanel:library:3.0.0'
+	implementation 'com.shehabic.droppy:Droppy:0.5.1@aar'
+}

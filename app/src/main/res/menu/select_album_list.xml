@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+		xmlns:compat="http://schemas.android.com/apk/res-auto">
+	<item 
+		android:id="@+id/menu_play_now"
+		android:icon="?actionbar_start"
+		android:title="@string/menu.play"
+		compat:showAsAction="always|withText"/>
+		
+	<item
+		android:id="@+id/menu_mediaroute"
+		compat:actionProviderClass="androidx.mediarouter.app.MediaRouteActionProvider"
+		compat:actionViewClass="androidx.mediarouter.app.MediaRouteButton"
+		compat:showAsAction="always"
+		android:title="@string/menu.cast"/>
+
+	<item
+		android:id="@+id/menu_shuffle"
+		android:icon="?attr/shuffle"
+		android:title="@string/menu.shuffle"
+		compat:showAsAction="never"/>
+
+	<group android:id="@+id/not_touchscreen">
+		<item
+			android:id="@+id/menu_refresh"
+			android:icon="?attr/refresh"
+			android:title="@string/menu.refresh"
+			compat:showAsAction="ifRoom|withText"/>
+	</group>
+
+	<item
+		android:id="@+id/menu_exit"
+		android:title="@string/menu.exit"/>
+</menu>

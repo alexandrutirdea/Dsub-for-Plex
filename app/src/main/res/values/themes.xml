@@ -1,0 +1,413 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<!--
+		Bridge themes extend the matching Theme.AppCompat theme and add only the
+		attributes Material Components requires. NavigationView (used by the
+		drawer in abstract_activity) throws at inflation time under a plain
+		AppCompat theme, so these must stay MaterialComponents descendants.
+	-->
+	<style name="Theme.DSub.Light.Base" parent="@style/Theme.MaterialComponents.Light.DarkActionBar.Bridge">
+		<!-- PreferenceFragmentCompat refuses to inflate without this, and every theme
+			 below descends from one of the two bases, so setting it here covers them all. -->
+		<item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
+		<item name="offline_icon">@drawable/main_offline_light</item>
+		<item name="media_button_backward">@drawable/media_backward_light</item>
+		<item name="media_button_forward">@drawable/media_forward_light</item>
+		<item name="media_button_rewind">@drawable/media_rewind_light</item>
+		<item name="media_button_fastforward">@drawable/media_fastforward_light</item>
+		<item name="media_button_pause">@drawable/media_pause_light</item>
+		<item name="media_button_repeat_off">@drawable/media_repeat_off_light</item>
+		<item name="media_button_repeat_single">@drawable/media_repeat_single_light</item>
+		<item name="media_button_repeat_all">@drawable/media_repeat_all_light</item>
+		<item name="media_button_start">@drawable/media_start_light</item>
+		<item name="media_button_stop">@drawable/media_stop_light</item>
+		<item name="actionbar_backward">@drawable/media_backward_dark</item>
+		<item name="actionbar_forward">@drawable/media_forward_dark</item>
+		<item name="actionbar_pause">@drawable/media_pause_dark</item>
+		<item name="actionbar_start">@drawable/media_start_dark</item>
+		<item name="actionbar_stop">@drawable/media_stop_dark</item>
+		<item name="actionbar_rewind">@drawable/media_rewind_dark</item>
+		<item name="actionbar_fastforward">@drawable/media_fastforward_dark</item>
+		<item name="chat_send">@drawable/ic_menu_chat_send_light</item>
+		<item name="add">@drawable/ic_action_add_dark</item>
+		<item name="download_none">@drawable/download_none_light</item>
+		<item name="shuffle">@drawable/ic_menu_shuffle_dark</item>
+		<item name="shuffle_button">@drawable/ic_menu_shuffle_light</item>
+		<item name="refresh">@drawable/ic_menu_refresh_dark</item>
+		<item name="search">@drawable/ic_menu_search_dark</item>
+		<item name="remove">@drawable/ic_menu_remove_dark</item>
+		<item name="save">@drawable/ic_menu_save_dark</item>
+		<item name="volume">@drawable/ic_action_volume_light</item>
+		<item name="toggle_list">@drawable/action_toggle_list_light</item>
+		<item name="select_server">@drawable/main_select_server_light</item>
+		<item name="select_tabs">@drawable/main_select_tabs_light</item>
+		<item name="playing">@drawable/playing_light</item>
+		<item name="downloading">@drawable/downloading_light</item>
+		<item name="bookmark">@drawable/ic_menu_bookmark_light</item>
+		<item name="share">@drawable/ic_menu_share_light</item>
+		<item name="add_person">@drawable/ic_menu_add_person_dark</item>
+		<item name="password">@drawable/ic_menu_password_dark</item>
+		<item name="rating_bad">@drawable/ic_action_rating_bad_light</item>
+		<item name="rating_good">@drawable/ic_action_rating_good_light</item>
+		<item name="radio">@drawable/ic_menu_radio_dark</item>
+		<item name="star_outline">@drawable/ic_toggle_star_outline_light</item>
+		<item name="download">@drawable/ic_menu_download_dark</item>
+		<item name="playback_speed">@drawable/ic_action_playback_speed_light</item>
+		<item name="drawerHome">@drawable/main_offline_light</item>
+		<item name="drawerLibrary">@drawable/ic_menu_library_light</item>
+		<item name="drawerPlaylists">@drawable/ic_menu_playlist_light</item>
+		<item name="drawerPodcasts">@drawable/ic_menu_podcast_light</item>
+		<item name="drawerBookmarks">@drawable/ic_menu_bookmark_light</item>
+		<item name="drawerInternetRadioStations">@drawable/ic_menu_radio_light</item>
+		<item name="drawerShares">@drawable/ic_menu_share_light</item>
+		<item name="drawerChat">@drawable/ic_menu_chat_light</item>
+		<item name="drawerAdmin">@drawable/ic_menu_admin_light</item>
+		<item name="drawerDownloading">@drawable/ic_menu_download_light</item>
+		<item name="drawerSettings">@drawable/ic_menu_settings_light</item>
+		<item name="drawerArrowStyle">@style/DSub.DrawerArrow</item>
+		<item name="colorPrimary">@color/lightPrimary</item>
+		<item name="colorPrimaryDark">@color/lightPrimaryDark</item>
+		<item name="colorAccent">@color/lightAccent</item>
+		<item name="actionbarBackgroundColor">@color/lightPrimary</item>
+		<item name="actionbarTitleStyle">@style/TextAppearance.AppCompat.Widget.ActionBar.Title.Inverse</item>
+		<item name="actionbarSubtitleStyle">@style/TextAppearance.AppCompat.Widget.ActionBar.Subtitle.Inverse</item>
+		<item name="actionbarPopupStyle">@style/ThemeOverlay.AppCompat.Light</item>
+		<item name="actionbarThemeStyle">@style/ThemeOverlay.AppCompat.Dark.ActionBar</item>
+		<item name="android:spinnerItemStyle">@style/DarkSpinnerItem</item>
+		<item name="drawerTitleStyle">@style/TextAppearance.AppCompat.Widget.ActionBar.Title.Inverse</item>
+		<item name="drawerSubtitleStyle">@style/TextAppearance.AppCompat.Widget.ActionBar.Subtitle.Inverse</item>
+		<item name="windowActionModeOverlay">true</item>
+		<item name="actionModeBackground">?attr/colorPrimary</item>
+		<item name="cardBackgroundDrawable">@drawable/card_rounded_corners_light</item>
+		<item name="drawerHeaderBackground">@drawable/drawer_header_light</item>
+		<item name="modernCardSurface">@color/modernSurface</item>
+		<item name="sheetSurface">@android:color/white</item>
+		<item name="dividerHairline">@color/dividerOnLight</item>
+		<item name="bottomNavInactiveColor">@color/nowPlayingTextTertiary</item>
+		<item name="collectionFieldBackground">@drawable/collection_search_field</item>
+		<item name="npBackdropTop">@color/nowPlayingBackdropTop</item>
+		<item name="npBackdropBottom">@color/nowPlayingBackdropBottom</item>
+		<item name="npToolbarColor">@color/nowPlayingToolbar</item>
+		<item name="npToolbarOverlay">@style/ThemeOverlay.AppCompat.Dark.ActionBar</item>
+		<item name="npPrimaryButton">@color/nowPlayingPrimaryButton</item>
+		<item name="npPlayGlyphTint">@android:color/black</item>
+		<item name="npTextPrimary">@color/nowPlayingTextPrimary</item>
+		<item name="npTextSecondary">@color/nowPlayingTextSecondary</item>
+		<item name="npTextTertiary">@color/nowPlayingTextTertiary</item>
+		<item name="npTextQuiet">@color/nowPlayingTextQuiet</item>
+		<item name="npTrack">@color/nowPlayingTrack</item>
+		<item name="npTrackPlayed">@color/nowPlayingTrackPlayed</item>
+	</style>
+	<style name="Theme.DSub.Dark.Base" parent="@style/Theme.MaterialComponents.Bridge">
+		<!-- PreferenceFragmentCompat refuses to inflate without this, and every theme
+			 below descends from one of the two bases, so setting it here covers them all. -->
+		<item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
+		<item name="offline_icon">@drawable/main_offline_dark</item>
+		<item name="media_button_backward">@drawable/media_backward_dark</item>
+		<item name="media_button_forward">@drawable/media_forward_dark</item>
+		<item name="media_button_rewind">@drawable/media_rewind_dark</item>
+		<item name="media_button_fastforward">@drawable/media_fastforward_dark</item>
+		<item name="media_button_pause">@drawable/media_pause_dark</item>
+		<item name="media_button_repeat_off">@drawable/media_repeat_off_dark</item>
+		<item name="media_button_repeat_single">@drawable/media_repeat_single_dark</item>
+		<item name="media_button_repeat_all">@drawable/media_repeat_all_dark</item>
+		<item name="media_button_start">@drawable/media_start_dark</item>
+		<item name="media_button_stop">@drawable/media_stop_dark</item>
+		<item name="actionbar_backward">@drawable/media_backward_dark</item>
+		<item name="actionbar_forward">@drawable/media_forward_dark</item>
+		<item name="actionbar_pause">@drawable/media_pause_dark</item>
+		<item name="actionbar_start">@drawable/media_start_dark</item>
+		<item name="actionbar_stop">@drawable/media_stop_dark</item>
+		<item name="actionbar_rewind">@drawable/media_rewind_dark</item>
+		<item name="actionbar_fastforward">@drawable/media_fastforward_dark</item>
+		<item name="chat_send">@drawable/ic_menu_chat_send_dark</item>
+		<item name="add">@drawable/ic_action_add_dark</item>
+		<item name="download_none">@drawable/download_none_dark</item>
+		<item name="shuffle">@drawable/ic_menu_shuffle_dark</item>
+		<item name="shuffle_button">@drawable/ic_menu_shuffle_dark</item>
+		<item name="refresh">@drawable/ic_menu_refresh_dark</item>
+		<item name="search">@drawable/ic_menu_search_dark</item>
+		<item name="remove">@drawable/ic_menu_remove_dark</item>
+		<item name="save">@drawable/ic_menu_save_dark</item>
+		<item name="volume">@drawable/ic_action_volume_dark</item>
+		<item name="toggle_list">@drawable/action_toggle_list_dark</item>
+		<item name="select_server">@drawable/main_select_server_dark</item>
+		<item name="select_tabs">@drawable/main_select_tabs_dark</item>
+		<item name="playing">@drawable/playing_dark</item>
+		<item name="downloading">@drawable/downloading_dark</item>
+		<item name="bookmark">@drawable/ic_menu_bookmark_dark</item>
+		<item name="share">@drawable/ic_menu_share_dark</item>
+		<item name="add_person">@drawable/ic_menu_add_person_dark</item>
+		<item name="password">@drawable/ic_menu_password_dark</item>
+		<item name="rating_bad">@drawable/ic_action_rating_bad_dark</item>
+		<item name="rating_good">@drawable/ic_action_rating_good_dark</item>
+		<item name="radio">@drawable/ic_menu_radio_dark</item>
+		<item name="star_outline">@drawable/ic_toggle_star_outline_dark</item>
+		<item name="download">@drawable/ic_menu_download_dark</item>
+		<item name="playback_speed">@drawable/ic_action_playback_speed_dark</item>
+		<item name="drawerHome">@drawable/main_offline_dark</item>
+		<item name="drawerLibrary">@drawable/ic_menu_library_dark</item>
+		<item name="drawerPlaylists">@drawable/ic_menu_playlist_dark</item>
+		<item name="drawerPodcasts">@drawable/ic_menu_podcast_dark</item>
+		<item name="drawerBookmarks">@drawable/ic_menu_bookmark_dark</item>
+		<item name="drawerInternetRadioStations">@drawable/ic_menu_radio_dark</item>
+		<item name="drawerShares">@drawable/ic_menu_share_dark</item>
+		<item name="drawerChat">@drawable/ic_menu_chat_dark</item>
+		<item name="drawerAdmin">@drawable/ic_menu_admin_dark</item>
+		<item name="drawerDownloading">@drawable/ic_menu_download_dark</item>
+		<item name="drawerSettings">@drawable/ic_menu_settings_dark</item>
+		<item name="drawerArrowStyle">@style/DSub.DrawerArrow</item>
+		<item name="colorPrimary">@color/lightPrimary</item>
+		<item name="colorPrimaryDark">@color/lightPrimaryDark</item>
+		<item name="colorAccent">@color/lightAccent</item>
+		<item name="actionbarBackgroundColor">@color/lightPrimary</item>
+		<item name="actionbarTitleStyle">@style/TextAppearance.AppCompat.Widget.ActionBar.Title</item>
+		<item name="actionbarSubtitleStyle">@style/TextAppearance.AppCompat.Widget.ActionBar.Subtitle</item>
+		<item name="actionbarPopupStyle">@style/ThemeOverlay.AppCompat.Dark</item>
+		<item name="actionbarThemeStyle">@style/ThemeOverlay.AppCompat.Dark.ActionBar</item>
+		<item name="drawerTitleStyle">@style/TextAppearance.AppCompat.Widget.ActionBar.Title</item>
+		<item name="drawerSubtitleStyle">@style/TextAppearance.AppCompat.Widget.ActionBar.Subtitle</item>
+		<item name="windowActionModeOverlay">true</item>
+		<item name="actionModeBackground">?attr/colorPrimary</item>
+		<item name="cardBackgroundDrawable">@drawable/card_rounded_corners_dark</item>
+		<item name="drawerHeaderBackground">@drawable/drawer_header_dark</item>
+		<item name="modernCardSurface">@color/modernSurface</item>
+		<item name="sheetSurface">@color/modernSurface</item>
+		<item name="dividerHairline">@color/dividerOnDark</item>
+		<item name="bottomNavInactiveColor">@color/nowPlayingTextTertiary</item>
+		<item name="collectionFieldBackground">@drawable/collection_search_field</item>
+		<item name="npBackdropTop">@color/nowPlayingBackdropTop</item>
+		<item name="npBackdropBottom">@color/nowPlayingBackdropBottom</item>
+		<item name="npToolbarColor">@color/nowPlayingToolbar</item>
+		<item name="npToolbarOverlay">@style/ThemeOverlay.AppCompat.Dark.ActionBar</item>
+		<item name="npPrimaryButton">@color/nowPlayingPrimaryButton</item>
+		<item name="npPlayGlyphTint">@android:color/black</item>
+		<item name="npTextPrimary">@color/nowPlayingTextPrimary</item>
+		<item name="npTextSecondary">@color/nowPlayingTextSecondary</item>
+		<item name="npTextTertiary">@color/nowPlayingTextTertiary</item>
+		<item name="npTextQuiet">@color/nowPlayingTextQuiet</item>
+		<item name="npTrack">@color/nowPlayingTrack</item>
+		<item name="npTrackPlayed">@color/nowPlayingTrackPlayed</item>
+	</style>
+	<style name="Theme.DSub.Light" parent="Theme.DSub.Light.Base">
+	</style>
+	<style name="Theme.DSub.Dark" parent="Theme.DSub.Dark.Base">
+	</style>
+	<!--
+		The modern theme. True black throughout with a single red accent, and the app
+		bar and status bar the same black as the content so nothing cuts a coloured
+		band across the top. The status bar has to be set here: at targetSdk 36 under
+		the Android 15 edge-to-edge rules Window.setStatusBarColor is a no-op, so the
+		theme attribute is the only lever left.
+	-->
+	<style name="Theme.DSub.Black.Base" parent="Theme.DSub.Dark.Base">
+		<item name="cardBackgroundDrawable">@drawable/card_rounded_corners_modern</item>
+		<!--
+			The app bar's own icons, on the same 24dp grid as the bottom bar's. The
+			inherited set is a decade older and thinner, and the two sat a thumb apart.
+			Only this theme and White point at them; the light themes keep the dark-on-
+			light drawables they need.
+		-->
+		<item name="actionbar_start">@drawable/ic_action_play</item>
+		<item name="shuffle">@drawable/ic_action_shuffle</item>
+		<item name="search">@drawable/ic_action_search</item>
+		<item name="refresh">@drawable/ic_action_refresh</item>
+		<item name="drawerHome">@drawable/ic_nav_home</item>
+		<item name="drawerLibrary">@drawable/ic_nav_library</item>
+		<item name="drawerPlaylists">@drawable/ic_nav_playlists</item>
+		<item name="drawerHeaderBackground">@color/modernBlack</item>
+		<!-- 70% white. The platform's secondary is dimmer than that, and the second
+		     line of a row was hard to read against true black. -->
+		<item name="android:textColorSecondary">@color/modernTextSecondary</item>
+		<item name="android:windowBackground">@color/modernBlack</item>
+		<item name="colorPrimary">@color/modernBlack</item>
+		<item name="colorPrimaryDark">@color/modernBlack</item>
+		<item name="android:statusBarColor">@color/modernBlack</item>
+		<item name="android:navigationBarColor">@color/modernBlack</item>
+		<item name="colorAccent">@color/modernAccent</item>
+		<item name="actionbarBackgroundColor">@color/modernBlack</item>
+		<item name="actionModeBackground">@color/modernBlack</item>
+	</style>
+	<style name="Theme.DSub.Black" parent="Theme.DSub.Black.Base">
+	</style>
+	<!--
+		The White theme: the Black theme flipped to a light ground. It descends from
+		Light.Base for the dark-on-light icon set, then paints every surface white and
+		turns the body text red. White bars need their own care that black ones did
+		not: the status-bar glyphs, the action-bar controls and the spinner text all
+		default to white against a coloured bar, so each is switched to a light/dark
+		variant here or they would vanish against the white.
+	-->
+	<style name="Theme.DSub.White.Base" parent="Theme.DSub.Light.Base">
+		<item name="cardBackgroundDrawable">@drawable/card_rounded_corners_modern_light</item>
+		<!--
+			The drawer and bottom bar tint these themselves, so the one white-filled set
+			serves both modern themes. The app bar's icons are not tinted and would
+			vanish against a white bar, so those stay as Light.Base left them.
+		-->
+		<item name="drawerHome">@drawable/ic_nav_home</item>
+		<item name="drawerLibrary">@drawable/ic_nav_library</item>
+		<item name="drawerPlaylists">@drawable/ic_nav_playlists</item>
+		<item name="drawerHeaderBackground">@color/modernWhite</item>
+		<item name="modernCardSurface">@color/modernSurfaceLight</item>
+		<item name="sheetSurface">@color/modernWhite</item>
+		<item name="bottomNavInactiveColor">@color/modernTextRedMuted</item>
+		<item name="collectionFieldBackground">@drawable/collection_search_field_light</item>
+		<!--
+			Now Playing flips to white here: a light backdrop, a white toolbar with
+			dark controls, a red play disc with a white glyph, and red text in place
+			of the white. The art-derived backdrop is skipped in code for this theme,
+			so the light gradient below is what shows.
+		-->
+		<item name="npBackdropTop">@color/modernSurfaceLight</item>
+		<item name="npBackdropBottom">@color/modernWhite</item>
+		<item name="npToolbarColor">@color/modernWhite</item>
+		<item name="npToolbarOverlay">@style/ThemeOverlay.AppCompat.Light</item>
+		<item name="npPrimaryButton">@color/modernAccent</item>
+		<item name="npPlayGlyphTint">@color/modernWhite</item>
+		<item name="npTextPrimary">@color/modernTextRed</item>
+		<item name="npTextSecondary">#CCD70015</item>
+		<item name="npTextTertiary">#99D70015</item>
+		<item name="npTextQuiet">#66D70015</item>
+		<item name="npTrack">#33D70015</item>
+		<item name="npTrackPlayed">@color/modernTextRed</item>
+		<item name="android:windowBackground">@color/modernWhite</item>
+		<item name="colorPrimary">@color/modernWhite</item>
+		<item name="colorPrimaryDark">@color/modernWhite</item>
+		<item name="android:statusBarColor">@color/modernWhite</item>
+		<item name="android:navigationBarColor">@color/modernWhite</item>
+		<item name="colorAccent">@color/modernAccent</item>
+		<item name="actionbarBackgroundColor">@color/modernWhite</item>
+		<item name="actionModeBackground">@color/modernWhite</item>
+		<item name="android:textColorPrimary">@color/modernTextRed</item>
+		<!-- 70% of the text red, matching what Black lifts its secondary text to. -->
+		<item name="android:textColorSecondary">@color/modernTextRedSecondary</item>
+		<item name="android:windowLightStatusBar">true</item>
+		<item name="android:windowLightNavigationBar">true</item>
+		<item name="actionbarThemeStyle">@style/ThemeOverlay.AppCompat.Light</item>
+		<item name="actionbarPopupStyle">@style/ThemeOverlay.AppCompat.Light</item>
+		<item name="actionbarTitleStyle">@style/ActionBarTitle.Red</item>
+		<item name="actionbarSubtitleStyle">@style/ActionBarSubtitle.Muted</item>
+		<item name="drawerTitleStyle">@style/ActionBarTitle.Red</item>
+		<item name="drawerSubtitleStyle">@style/ActionBarSubtitle.Muted</item>
+		<item name="android:spinnerItemStyle">@style/LightSpinnerItem</item>
+	</style>
+	<style name="Theme.DSub.White" parent="Theme.DSub.White.Base">
+	</style>
+	<style name="Theme.DSub.Holo.Base" parent="Theme.DSub.Dark.Base">
+		<item name="android:windowBackground">@drawable/background</item>
+		<item name="colorPrimary">@color/holoPrimary</item>
+		<item name="colorPrimaryDark">@color/holoPrimaryDark</item>
+		<item name="colorAccent">@color/holoAccent</item>
+		<item name="actionbarBackgroundColor">@color/holoPrimary</item>
+		<item name="drawerHeaderBackground">@drawable/drawer_header_holo</item>
+		<item name="cardBackgroundDrawable">@drawable/card_rounded_corners_black</item>
+	</style>
+	<style name="Theme.DSub.Holo" parent="Theme.DSub.Holo.Base">
+	</style>
+
+	<style name="Theme.DSub.Light.No_Actionbar" parent="Theme.DSub.Light">
+		<item name="windowActionBar">false</item>
+		<item name="windowNoTitle">true</item>
+	</style>
+	<style name="Theme.DSub.Black.No_Actionbar" parent="Theme.DSub.Black">
+		<item name="windowActionBar">false</item>
+		<item name="windowNoTitle">true</item>
+	</style>
+	<style name="Theme.DSub.White.No_Actionbar" parent="Theme.DSub.White">
+		<item name="windowActionBar">false</item>
+		<item name="windowNoTitle">true</item>
+	</style>
+	<style name="Theme.DSub.Dark.No_Actionbar" parent="Theme.DSub.Dark">
+		<item name="windowActionBar">false</item>
+		<item name="windowNoTitle">true</item>
+	</style>
+	<style name="Theme.DSub.Holo.No_Actionbar" parent="Theme.DSub.Holo">
+		<item name="windowActionBar">false</item>
+		<item name="windowNoTitle">true</item>
+	</style>
+
+	<style name="Theme.DSub.Light.No_Color.Base" parent="Theme.DSub.Light.No_Actionbar">
+		<item name="actionbarThemeStyle">@style/ThemeOverlay.AppCompat.ActionBar</item>
+		<item name="actionbarBackgroundColor">@android:color/transparent</item>
+		<item name="actionbarTitleStyle">@style/TextAppearance.AppCompat.Widget.ActionBar.Title</item>
+		<item name="actionbarSubtitleStyle">@style/TextAppearance.AppCompat.Widget.ActionBar.Subtitle</item>
+		<item name="android:spinnerItemStyle">@style/LightSpinnerItem</item>
+		<item name="drawerTitleStyle">@style/TextAppearance.AppCompat.Widget.ActionBar.Title.Inverse</item>
+		<item name="drawerSubtitleStyle">@style/TextAppearance.AppCompat.Widget.ActionBar.Subtitle.Inverse</item>
+		<item name="actionbar_backward">@drawable/media_backward_light</item>
+		<item name="actionbar_forward">@drawable/media_forward_light</item>
+		<item name="actionbar_pause">@drawable/media_pause_light</item>
+		<item name="actionbar_start">@drawable/media_start_light</item>
+		<item name="actionbar_stop">@drawable/media_stop_light</item>
+		<item name="actionbar_rewind">@drawable/media_rewind_light</item>
+		<item name="actionbar_fastforward">@drawable/media_fastforward_light</item>
+		<item name="add">@drawable/ic_action_add_light</item>
+		<item name="shuffle">@drawable/ic_menu_shuffle_light</item>
+		<item name="refresh">@drawable/ic_menu_refresh_light</item>
+		<item name="search">@drawable/ic_menu_search_light</item>
+		<item name="remove">@drawable/ic_menu_remove_light</item>
+		<item name="save">@drawable/ic_menu_save_light</item>
+		<item name="add_person">@drawable/ic_menu_add_person_light</item>
+		<item name="password">@drawable/ic_menu_password_light</item>
+		<item name="radio">@drawable/ic_menu_radio_light</item>
+		<item name="download">@drawable/ic_menu_download_light</item>
+		<item name="actionModeBackground">@color/background_material_light</item>
+		<item name="actionModeStyle">@style/LightActionMode</item>
+		<item name="actionModeCloseButtonStyle">@style/DarkCloseButton</item>
+	</style>
+	<style name="Theme.DSub.Black.No_Color.Base" parent="Theme.DSub.Black.No_Actionbar">
+		<item name="actionbarBackgroundColor">@android:color/transparent</item>
+		<item name="actionModeBackground">@android:color/black</item>
+	</style>
+	<style name="Theme.DSub.White.No_Color.Base" parent="Theme.DSub.White.No_Actionbar">
+		<item name="actionbarBackgroundColor">@android:color/transparent</item>
+		<item name="actionModeBackground">@color/modernWhite</item>
+	</style>
+	<style name="Theme.DSub.Dark.No_Color.Base" parent="Theme.DSub.Dark.No_Actionbar">
+		<item name="actionbarBackgroundColor">@android:color/transparent</item>
+		<item name="actionModeBackground">@color/background_material_dark</item>
+	</style>
+	<style name="Theme.DSub.Holo.No_Color.Base" parent="Theme.DSub.Holo.No_Actionbar">
+		<item name="actionbarBackgroundColor">@android:color/transparent</item>
+		<item name="actionModeBackground">@drawable/background</item>
+	</style>
+
+	<style name="Theme.DSub.Light.No_Color" parent="Theme.DSub.Light.No_Color.Base">
+	</style>
+	<style name="Theme.DSub.Black.No_Color" parent="Theme.DSub.Black.No_Color.Base">
+	</style>
+	<style name="Theme.DSub.White.No_Color" parent="Theme.DSub.White.No_Color.Base">
+	</style>
+	<style name="Theme.DSub.Dark.No_Color" parent="Theme.DSub.Dark.No_Color.Base">
+	</style>
+	<style name="Theme.DSub.Holo.No_Color" parent="Theme.DSub.Holo.No_Color.Base">
+	</style>
+
+	<style name="DSub.DrawerArrow" parent="Widget.AppCompat.DrawerArrowToggle">
+		<item name="spinBars">true</item>
+	</style>
+
+	<!-- White theme: red title / muted-red subtitle for the app bar and drawer,
+	     matching the red body text where the inherited styles would be white. -->
+	<style name="ActionBarTitle.Red" parent="TextAppearance.AppCompat.Widget.ActionBar.Title">
+		<item name="android:textColor">@color/modernTextRed</item>
+	</style>
+	<style name="ActionBarSubtitle.Muted" parent="TextAppearance.AppCompat.Widget.ActionBar.Subtitle">
+		<item name="android:textColor">@color/modernTextRedMuted</item>
+	</style>
+
+	<style name="LightSpinnerItem" parent="Widget.AppCompat.TextView.SpinnerItem">
+		<item name="android:textColor">?android:attr/textColorPrimary</item>
+	</style>
+	<style name="DarkSpinnerItem" parent="Widget.AppCompat.TextView.SpinnerItem">
+		<item name="android:textColor">?android:attr/textColorPrimaryInverse</item>
+	</style>
+	<style name="LightActionMode" parent="@style/Widget.AppCompat.ActionMode">
+		<item name="titleTextStyle">@style/TextAppearance.AppCompat.Widget.ActionBar.Title.Inverse</item>
+		<item name="subtitleTextStyle">@style/TextAppearance.AppCompat.Widget.ActionBar.Subtitle.Inverse</item>
+	</style>
+	<style name="DarkCloseButton" parent="@style/Widget.AppCompat.ActionButton.CloseMode">
+		<item name="colorControlNormal">@android:color/black</item>
+	</style>
+</resources>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+	Fallback backdrop for Now Playing. At runtime this is replaced by a gradient
+	built from the album art's own colours; this is what shows before the art has
+	loaded, and whenever a colour cannot be extracted from it.
+-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+	<gradient
+		android:angle="270"
+		android:startColor="?attr/npBackdropTop"
+		android:endColor="?attr/npBackdropBottom"
+		android:type="linear"/>
+</shape>

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="appwidget_text">#FFFFFF</color>
+	<color name="overlayColor">#80000000</color>
+
+	<color name="holo_blue_light">#ff33b5e5</color>
+	<color name="holo_orange_light">#ffffbb33</color>
+	<color name="holo_green_light">#ff99cc00</color>
+	<color name="holo_red_light">#ffff4444</color>
+
+	<color name="lightPrimary">#2196f3</color>
+	<color name="lightPrimaryDark">#1e88e5</color>
+	<color name="lightAccent">#448aff</color>
+
+	<color name="holoPrimary">#009688</color>
+	<color name="holoPrimaryDark">#00897b</color>
+	<color name="holoAccent">#64ffda</color>
+
+	<!--
+		Modern palette, used by the Black theme. Surfaces are true black with cards
+		only just lifted off it - enough to read as a card without becoming grey - and
+		a single red accent.
+	-->
+	<color name="modernBlack">#000000</color>
+	<color name="modernSurface">#121212</color>
+	<color name="modernAccent">#FF3B30</color>
+	<color name="modernHeader">#FFFFFF</color>
+
+	<!--
+		Second-line text: an artist under a title, a year, a duration. 70% of the ground
+		colour in both modern themes, up from the platform's dimmer secondary.
+
+		Named rather than written inline in the theme: NavigationView reads
+		android:textColorSecondary off the theme and asks the resources for it by id, and
+		a literal colour has no id - it threw at inflation time.
+	-->
+	<color name="modernTextSecondary">#B3FFFFFF</color>
+	<color name="modernTextRedSecondary">#B3D70015</color>
+
+	<!-- The line between a bar and the content it sits against. -->
+	<color name="dividerOnDark">#1FFFFFFF</color>
+	<color name="dividerOnLight">#1F000000</color>
+
+	<!--
+		The un-cached cloud on a track row. A mid grey rather than a theme colour: this
+		one drawable is shared by every theme, which here are switched at runtime rather
+		than by a resource qualifier, and this sits legibly on both the black surfaces
+		and the white ones without going loud enough to compete with the red.
+	-->
+	<color name="cloudIdle">#8E8E93</color>
+
+	<!--
+		A filter pill holding no value: the same mid grey as the idle cloud, for the same
+		reason - one drawable across runtime-switched themes, legible on black and white
+		without competing with the red that means "this filter is on".
+	-->
+	<color name="filterChipIdle">#8E8E93</color>
+
+	<!--
+		The White theme: the Black theme inverted. Pure white surfaces with cards
+		only just lifted off it, and red where Black puts white - the body text is
+		red, not the accent alone. The text red is deeper than the accent so it
+		still clears white for reading; the accent stays the brighter Black red.
+	-->
+	<color name="modernWhite">#FFFFFF</color>
+	<color name="modernSurfaceLight">#F2F2F7</color>
+	<color name="modernTextRed">#D70015</color>
+	<color name="modernTextRedMuted">#99D70015</color>
+	<!-- The collection filter field: lifted just off black, like the pills were. -->
+	<color name="collectionSearchField">#1C1C1E</color>
+
+	<!-- Fill of the autoplay pill while autoplay is running; its text goes accent red. -->
+	<color name="collectionActionOn">#FFFFFF</color>
+
+	<!-- Now Playing. Backdrop colours are only the pre-art fallback; at runtime the
+	     gradient is rebuilt from the album art. -->
+	<color name="nowPlayingToolbar">#000000</color>
+	<color name="nowPlayingBackdropTop">#2E2036</color>
+	<color name="nowPlayingBackdropBottom">#000000</color>
+	<color name="nowPlayingPrimaryButton">#FFFFFF</color>
+	<color name="nowPlayingTextPrimary">#FFFFFF</color>
+	<color name="nowPlayingTextSecondary">#B0FFFFFF</color>
+	<color name="nowPlayingTextTertiary">#8AFFFFFF</color>
+	<color name="nowPlayingTextQuiet">#61FFFFFF</color>
+	<color name="nowPlayingTrack">#33FFFFFF</color>
+	<!-- The played portion and the thumb are the accent, not white: the scrubber is
+	     the one live thing on the screen, and white made it read as another piece of
+	     chrome next to the play disc. The White theme sets its own red equivalent. -->
+	<color name="nowPlayingTrackPlayed">@color/modernAccent</color>
+</resources>

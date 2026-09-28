@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+	Section header. Large, bold and white rather than small and tinted: these read as
+	titles for the block beneath them, not as labels.
+-->
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/item_name"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+	android:textSize="24sp"
+	android:textStyle="bold"
+	android:background="@android:color/transparent"
+	android:textColor="?android:textColorPrimary"
+	android:paddingLeft="@dimen/List.Keyline"
+	android:paddingRight="@dimen/List.Keyline"
+	android:paddingTop="20dp"
+	android:paddingBottom="10dp"/>

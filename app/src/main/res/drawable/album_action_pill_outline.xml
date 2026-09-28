@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+	Secondary album action: the same pill as collection_action_pill but outlined rather
+	than filled, so "add to queue" reads as the lesser of the two next to "play" and the
+	header does not end up with two competing blocks of red under a red title.
+-->
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+	android:color="#33FF3B30">
+	<item>
+		<shape android:shape="rectangle">
+			<corners android:radius="12dp"/>
+			<stroke
+				android:width="1dp"
+				android:color="@color/modernAccent"/>
+			<solid android:color="@android:color/transparent"/>
+		</shape>
+	</item>
+</ripple>

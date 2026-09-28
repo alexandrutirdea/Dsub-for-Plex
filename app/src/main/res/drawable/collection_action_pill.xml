@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Resting state of a collection action button: an accent-red rounded pill. -->
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+	android:color="#33FFFFFF">
+	<item>
+		<shape android:shape="rectangle">
+			<corners android:radius="12dp"/>
+			<solid android:color="@color/modernAccent"/>
+		</shape>
+	</item>
+</ripple>

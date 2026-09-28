@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+	What DSub will accept on the wire.
+
+	Two things are declared here that used to be decided in code, badly. Certificates are
+	now checked against the usual trust store, and a server with a certificate of its own
+	is reached by installing that certificate on the phone: "user" below is what makes
+	DSub honour it, since from Android 7 an app ignores user-installed CAs unless it says
+	otherwise. Skipping the check entirely is still possible, but only for one server at a
+	time and only when its own setting says so - see SelfSignedTls.
+
+	Cleartext stays permitted. A Subsonic server on a home LAN very often speaks plain
+	http, and this file replaces android:usesCleartextTraffic="true" in the manifest, which
+	said exactly the same thing. It is worth narrowing to named domains for anyone whose
+	server does have TLS.
+-->
+<network-security-config>
+	<base-config cleartextTrafficPermitted="true">
+		<trust-anchors>
+			<certificates src="system"/>
+			<certificates src="user"/>
+		</trust-anchors>
+	</base-config>
+</network-security-config>

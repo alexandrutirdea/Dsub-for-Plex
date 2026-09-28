@@ -1,0 +1,317 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+	Album header: the cover as the subject, with the album's details centred beneath it.
+
+	This is the counterpart to select_album_header, which keeps the older art-beside-text
+	arrangement. That one is still used for artist and podcast screens, where the long
+	biography flows around a small image and SelectDirectoryFragment reaches in to rewrite
+	the text block's RelativeLayout rules. Splitting the two is what lets this one be a
+	plain vertical stack without breaking that.
+
+	Every id here also exists there, so setupTextDisplay and setupButtonEvents work
+	against either without knowing which was inflated.
+-->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	android:id="@+id/select_album_header_wrapper"
+	android:layout_height="wrap_content"
+	android:layout_width="match_parent">
+
+	<LinearLayout
+		android:id="@+id/select_album_header"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_gravity="top"
+		android:orientation="vertical"
+		android:gravity="center_horizontal"
+		android:paddingLeft="20dp"
+		android:paddingRight="20dp"
+		android:paddingTop="16dp"
+		android:paddingBottom="8dp">
+
+		<!--
+			The card is what lets a non-square cover letterbox onto a surface rather than
+			stretch, and gives the shadow somewhere to fall. Same treatment as the artwork
+			on Now Playing, at a smaller radius because this one is smaller.
+		-->
+		<com.google.android.material.card.MaterialCardView
+			android:layout_width="@dimen/AlbumArt.Hero"
+			android:layout_height="@dimen/AlbumArt.Hero"
+			app:cardCornerRadius="@dimen/Card.Radius"
+			app:cardElevation="8dp"
+			app:cardBackgroundColor="?attr/modernCardSurface">
+
+			<ImageView
+				android:id="@+id/select_album_art"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"
+				android:scaleType="fitCenter"
+				android:contentDescription="@null"/>
+		</com.google.android.material.card.MaterialCardView>
+
+		<LinearLayout
+			android:id="@+id/select_album_text_layout"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:orientation="vertical"
+			android:gravity="center_horizontal"
+			android:layout_marginTop="16dp">
+
+			<!--
+				Two lines and ellipsized rather than the marquee the older header uses: a
+				marquee has to be the focused view to animate, which it is not once the
+				track list below can take focus, so a long centred title would simply sit
+				cut off.
+			-->
+			<!--
+				Accent red, the same treatment the track title gets on Now Playing: the one
+				coloured thing on the screen, with everything under it staying white or grey.
+			-->
+			<TextView
+				android:id="@+id/select_album_title"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:gravity="center_horizontal"
+				android:maxLines="2"
+				android:ellipsize="end"
+				android:textAppearance="?android:attr/textAppearanceLarge"
+				android:textStyle="bold"
+				android:textColor="@color/modernAccent"/>
+
+			<TextView
+				android:id="@+id/select_album_artist"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:gravity="center_horizontal"
+				android:layout_marginTop="2dp"
+				android:singleLine="true"
+				android:ellipsize="end"
+				android:textAppearance="?android:attr/textAppearanceMedium"
+				android:textColor="?android:textColorPrimary"/>
+
+			<!--
+				Original release date and label. Gone until the details arrive, and stays
+				gone on servers that have no tag for either, so the header does not hold an
+				empty line open for something that will never load.
+			-->
+			<TextView
+				android:id="@+id/select_album_release"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:gravity="center_horizontal"
+				android:layout_marginTop="6dp"
+				android:maxLines="2"
+				android:ellipsize="end"
+				android:visibility="gone"
+				android:textAppearance="?android:attr/textAppearanceSmall"
+				android:textColor="?android:textColorSecondary"/>
+
+			<!--
+				match_parent with a centred gravity rather than wrap_content: the row grew a
+				third entry, and wrapping to its contents left it able to measure wider than
+				the header and lose the end of the last one off the edge.
+			-->
+			<LinearLayout
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:orientation="horizontal"
+				android:gravity="center_horizontal"
+				android:layout_marginTop="6dp">
+
+				<TextView
+					android:id="@+id/select_album_song_count"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:singleLine="true"
+					android:textAppearance="?android:attr/textAppearanceSmall"
+					android:textColor="?android:textColorSecondary"/>
+
+				<TextView
+					android:id="@+id/select_album_song_separator"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="@string/select_album.detail_separator"
+					android:singleLine="true"
+					android:textAppearance="?android:attr/textAppearanceSmall"
+					android:textColor="?android:textColorSecondary"/>
+
+				<TextView
+					android:id="@+id/select_album_song_length"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:singleLine="true"
+					android:textAppearance="?android:attr/textAppearanceSmall"
+					android:textColor="?android:textColorSecondary"/>
+
+				<!--
+				  When the album was last listened to. Both this and its separator stay gone
+				  on an album nothing is known about, rather than claiming it was never
+				  played: a directory read back from a cache written before the field
+				  existed has nothing to say either way.
+				-->
+				<TextView
+					android:id="@+id/select_album_last_played_separator"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:text="@string/select_album.detail_separator"
+					android:singleLine="true"
+					android:visibility="gone"
+					android:textAppearance="?android:attr/textAppearanceSmall"
+					android:textColor="?android:textColorSecondary"/>
+
+				<TextView
+					android:id="@+id/select_album_last_played"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:singleLine="true"
+					android:ellipsize="end"
+					android:visibility="gone"
+					android:textAppearance="?android:attr/textAppearanceSmall"
+					android:textColor="?android:textColorSecondary"/>
+			</LinearLayout>
+
+			<!--
+				How the dashboard rates the album. Gone until it answers, and stays gone for
+				an album it has not scored or when it is not reachable, so the header does
+				not hold a line open for something that may never arrive.
+			-->
+			<LinearLayout
+				android:id="@+id/select_album_rating_row"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:orientation="horizontal"
+				android:gravity="center_horizontal|center_vertical"
+				android:layout_marginTop="4dp"
+				android:visibility="gone">
+
+				<RatingBar
+					android:id="@+id/select_album_rating"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:isIndicator="true"
+					android:numStars="5"
+					style="@style/AccentRatingBar.Small"/>
+
+				<TextView
+					android:id="@+id/select_album_rating_value"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:layout_marginLeft="6dp"
+					android:singleLine="true"
+					android:textAppearance="?android:attr/textAppearanceSmall"
+					android:textColor="?android:textColorSecondary"/>
+			</LinearLayout>
+		</LinearLayout>
+
+		<!--
+			Play and add-to-queue. Both go through the same playNow the toolbar's play
+			button uses, which plays the selection when there is one and the whole album
+			otherwise, so the pills and the toolbar can never disagree.
+		-->
+		<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:orientation="horizontal"
+			android:gravity="center_horizontal"
+			android:layout_marginTop="14dp">
+
+			<androidx.appcompat.widget.AppCompatTextView
+				android:id="@+id/select_album_play"
+				style="@style/AlbumActionButton"
+				android:layout_width="0dp"
+				android:layout_height="44dp"
+				android:layout_weight="1"
+				android:layout_marginRight="8dp"
+				app:drawableStartCompat="@drawable/ic_album_play"
+				android:text="@string/select_album.play"/>
+
+			<androidx.appcompat.widget.AppCompatTextView
+				android:id="@+id/select_album_queue"
+				style="@style/AlbumActionButton.Secondary"
+				android:layout_width="0dp"
+				android:layout_height="44dp"
+				android:layout_weight="1"
+				app:drawableStartCompat="@drawable/ic_album_queue"
+				android:text="@string/select_album.add_to_queue"/>
+		</LinearLayout>
+
+		<LinearLayout
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:orientation="horizontal"
+			android:gravity="center_vertical"
+			android:layout_marginTop="4dp">
+
+			<LinearLayout
+				android:id="@+id/select_album_rate_wrapper"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:gravity="center_vertical">
+
+				<RatingBar
+					android:id="@+id/select_album_rate"
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:numStars="5"
+					style="@style/AccentRatingBar.Small"
+					android:layout_gravity="center_vertical"/>
+			</LinearLayout>
+
+			<ImageButton
+				android:id="@+id/select_album_star"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				style="@style/BasicButton"
+				android:src="@android:drawable/star_big_off"
+				android:layout_gravity="center_vertical"/>
+
+			<ImageView
+				android:id="@+id/select_album_share"
+				android:layout_height="wrap_content"
+				android:layout_width="wrap_content"
+				android:scaleType="fitCenter"
+				android:src="?attr/share"
+				style="@style/BasicButton"
+				android:layout_gravity="center_vertical"/>
+		</LinearLayout>
+	</LinearLayout>
+
+	<FrameLayout
+		android:id="@+id/header_progress"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:clickable="true"
+		android:visibility="gone"
+		android:layout_gravity="top">
+
+		<LinearLayout
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:orientation="vertical"
+			android:layout_gravity="center">
+
+			<ProgressBar
+				android:id="@+id/tab_progress_spinner"
+				style="?android:attr/progressBarStyleLarge"
+				android:layout_gravity="center_horizontal"
+				android:layout_marginRight="6dp"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"/>
+
+			<TextView
+				android:id="@+id/tab_progress_message"
+				android:text="@string/progress.artist_info"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_gravity="center_horizontal"
+				android:textAppearance="?android:attr/textAppearanceMedium"
+				android:textColor="?android:textColorPrimary"/>
+		</LinearLayout>
+	</FrameLayout>
+
+	<View
+		android:layout_width="match_parent"
+		android:layout_height="1px"
+		android:background="?attr/colorPrimary"
+		android:layout_gravity="bottom"/>
+</FrameLayout>

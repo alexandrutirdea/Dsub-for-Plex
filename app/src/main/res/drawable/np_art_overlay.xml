@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+	Backing for the rating strip that sits along the bottom of the album art. The
+	bottom corners match the art card's radius; the top ones stay square so the
+	strip reads as a band across the picture rather than a floating pill.
+-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+	android:shape="rectangle">
+	<solid android:color="@color/overlayColor"/>
+	<corners
+		android:bottomLeftRadius="24dp"
+		android:bottomRightRadius="24dp"/>
+</shape>

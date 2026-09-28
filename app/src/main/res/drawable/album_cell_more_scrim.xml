@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+	The disc the overflow button sits on when it is over a cover.
+
+	A white icon alone is legible on most sleeves and invisible on the pale ones, and a
+	sleeve is whatever the record happens to be - so the icon brings its own ground with
+	it rather than trusting the art underneath. Dark in both themes for the same reason:
+	what is behind it is the cover, not the card.
+-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+	android:shape="oval">
+	<solid android:color="#66000000"/>
+</shape>

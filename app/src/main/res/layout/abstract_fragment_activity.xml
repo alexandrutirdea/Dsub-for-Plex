@@ -1,0 +1,191 @@
+<!--
+	The sliding Now Playing panel sits above the bottom navigation, so the mini player
+	stacks on top of the bar rather than fighting it for the same strip. The panel is
+	weighted and the bar is not, so the bar keeps its height and the panel takes what
+	is left. When the panel is expanded the activity hides the bar, giving Now Playing
+	the full screen.
+-->
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:sothree="http://schemas.android.com/apk/res-auto"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:orientation="vertical">
+
+<com.sothree.slidinguppanel.SlidingUpPanelLayout
+	android:id="@+id/slide_up_panel"
+	android:layout_width="match_parent"
+	android:layout_height="0dp"
+	android:layout_weight="1"
+	android:gravity="bottom"
+	sothree:umanoPanelHeight="?attr/actionBarSize"
+	sothree:umanoShadowHeight="4dp"
+	sothree:umanoDragView="@+id/slide_up_swipe_target">
+
+	<FrameLayout
+		android:layout_width="match_parent"
+		android:layout_height="match_parent">
+
+		<androidx.appcompat.widget.Toolbar
+			android:id="@+id/main_toolbar"
+			android:layout_height="?attr/actionBarSize"
+			android:layout_width="match_parent"
+			android:background="?attr/actionbarBackgroundColor"
+			android:elevation="4dp"
+			android:theme="?attr/actionbarThemeStyle"
+			app:popupTheme="?attr/actionbarPopupStyle"/>
+
+		<include layout="@layout/abstract_fragment_container"/>
+	</FrameLayout>
+
+	<LinearLayout
+		android:id="@+id/slide_up_frame"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:orientation="vertical">
+
+		<!--
+			The toolbar and the mini player swap visibility in this container, and they
+			need different backgrounds: the mini player keeps the app bar colour, while
+			the expanded Now Playing toolbar has to sit on the dark backdrop rather than
+			cut a coloured band across it. So the colour lives on each child, not here.
+		-->
+		<FrameLayout
+			android:id="@+id/slide_up_swipe_target"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:background="@android:color/transparent">
+
+			<androidx.appcompat.widget.Toolbar
+				android:id="@+id/now_playing_toolbar"
+				android:layout_height="?attr/actionBarSize"
+				android:layout_width="match_parent"
+				android:background="?attr/npToolbarColor"
+				android:visibility="gone"
+				android:theme="?attr/npToolbarOverlay"
+				app:popupTheme="?attr/actionbarPopupStyle"/>
+
+			<LinearLayout
+				android:id="@+id/bottom_bar"
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				style="@style/BasicButton"
+				android:orientation="horizontal"
+				android:background="?attr/actionbarBackgroundColor"
+				android:elevation="4dp">
+
+				<ImageView
+					android:id="@+id/album_art"
+					android:layout_width="?attr/actionBarSize"
+					android:layout_height="?attr/actionBarSize"
+					android:layout_gravity="left|center"
+					android:scaleType="fitCenter"/>
+
+				<LinearLayout
+					android:layout_width="0dp"
+					android:layout_height="wrap_content"
+					android:layout_gravity="center_vertical"
+					android:layout_weight="1"
+					android:orientation="vertical"
+					android:paddingLeft="8dip">
+
+					<TextView
+						android:id="@+id/track_name"
+						android:layout_height="wrap_content"
+						android:layout_width="wrap_content"
+						android:singleLine="true"
+						android:text="@string/main.title"
+						android:ellipsize="marquee"
+						android:marqueeRepeatLimit="marquee_forever"
+						android:scrollHorizontally="true"
+						android:focusable="true"
+						android:focusableInTouchMode="true"
+						style="?attr/actionbarTitleStyle">
+
+						<requestFocus android:focusable="true"
+							android:focusableInTouchMode="true"
+							android:duplicateParentState="true" />
+					</TextView>
+
+					<TextView
+						android:id="@+id/artist_name"
+						android:layout_height="wrap_content"
+						android:layout_width="wrap_content"
+						android:singleLine="true"
+						android:text="@string/main.artist"
+						style="?attr/actionbarSubtitleStyle"/>
+				</LinearLayout>
+
+
+				<LinearLayout
+					android:layout_height="fill_parent"
+					android:layout_width="0dp"
+					android:layout_weight="1">
+
+					<ImageButton
+						style="@style/PlaybackControl.BottomBar"
+						android:id="@+id/download_rewind"
+						android:src="?attr/actionbar_rewind"
+						android:padding="2dp"
+						android:visibility="gone"/>
+
+					<ImageButton
+						style="@style/PlaybackControl.BottomBar"
+						android:id="@+id/download_previous"
+						android:src="?attr/actionbar_backward"
+						android:padding="2dp"/>
+
+					<ImageButton
+						style="@style/PlaybackControl.BottomBar"
+						android:id="@+id/download_start"
+						android:src="?attr/actionbar_start"/>
+
+					<ImageButton
+						style="@style/PlaybackControl.BottomBar"
+						android:id="@+id/download_next"
+						android:src="?attr/actionbar_forward"
+						android:padding="2dp"/>
+
+					<ImageButton
+						style="@style/PlaybackControl.BottomBar"
+						android:id="@+id/download_fastforward"
+						android:src="?attr/actionbar_fastforward"
+						android:padding="2dp"
+						android:visibility="gone"/>
+				</LinearLayout>
+			</LinearLayout>
+		</FrameLayout>
+
+		<FrameLayout
+					android:id="@+id/now_playing_fragment_container"
+					android:layout_width="match_parent"
+					android:layout_height="0dp"
+					android:layout_weight="1"
+					android:clickable="true"/>
+	</LinearLayout>
+</com.sothree.slidinguppanel.SlidingUpPanelLayout>
+
+	<!--
+		A hairline over the bottom bar. Bar and content are the same black, so without
+		it a list simply ran out at the bottom of the screen with no edge to it, and the
+		last row scrolled invisibly under the labels.
+	-->
+	<View
+		android:layout_width="match_parent"
+		android:layout_height="1dp"
+		android:background="?attr/dividerHairline"/>
+
+	<com.google.android.material.bottomnavigation.BottomNavigationView
+		android:id="@+id/bottom_navigation"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:background="?attr/actionbarBackgroundColor"
+		app:elevation="0dp"
+		app:labelVisibilityMode="labeled"
+		app:itemIconTint="@color/bottom_nav_item"
+		app:itemTextColor="@color/bottom_nav_item"
+		app:itemTextAppearanceInactive="@style/BottomNavLabel"
+		app:itemTextAppearanceActive="@style/BottomNavLabel.Active"
+		app:menu="@menu/bottom_navigation"/>
+</LinearLayout>

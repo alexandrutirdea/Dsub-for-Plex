@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+	Artist header: who this is, how much of them there is, and how to start.
+
+	An artist screen used to open on nothing but a row or two of albums and a screenful
+	of black under them. The albums are a grid of covers now, and this stands above them
+	the way the album header stands above a track listing.
+
+	Deliberately not select_album_header_hero: that one is built around a square cover
+	and an album's details, and reading a discography as one big album cover is exactly
+	the arbitrary pick usesHeroHeader() avoids elsewhere.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	android:id="@+id/select_artist_header"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+	android:orientation="vertical"
+	android:gravity="center_horizontal"
+	android:paddingLeft="20dp"
+	android:paddingRight="20dp"
+	android:paddingTop="16dp"
+	android:paddingBottom="10dp">
+
+	<!-- Round, matching the Library rows an artist is reached from. Hidden where the
+	     server hands out no picture, rather than holding open an empty circle. -->
+	<de.hdodenhof.circleimageview.CircleImageView
+		android:id="@+id/select_artist_art"
+		android:layout_width="@dimen/ArtistHeader.Art"
+		android:layout_height="@dimen/ArtistHeader.Art"
+		android:visibility="gone"/>
+
+	<TextView
+		android:id="@+id/select_artist_name"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_marginTop="14dp"
+		android:gravity="center_horizontal"
+		android:maxLines="2"
+		android:ellipsize="end"
+		android:textAppearance="?android:attr/textAppearanceLarge"
+		android:textStyle="bold"
+		android:textColor="@color/modernAccent"/>
+
+	<TextView
+		android:id="@+id/select_artist_count"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_marginTop="4dp"
+		android:gravity="center_horizontal"
+		android:singleLine="true"
+		style="@style/ListText.Caption"/>
+
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:orientation="horizontal"
+		android:gravity="center_horizontal"
+		android:layout_marginTop="14dp">
+
+		<androidx.appcompat.widget.AppCompatTextView
+			android:id="@+id/select_artist_play"
+			style="@style/AlbumActionButton"
+			android:layout_width="0dp"
+			android:layout_height="44dp"
+			android:layout_weight="1"
+			android:layout_marginRight="8dp"
+			app:drawableStartCompat="@drawable/ic_album_play"
+			android:text="@string/select_album.play"/>
+
+		<androidx.appcompat.widget.AppCompatTextView
+			android:id="@+id/select_artist_shuffle"
+			style="@style/AlbumActionButton.Secondary"
+			android:layout_width="0dp"
+			android:layout_height="44dp"
+			android:layout_weight="1"
+			app:drawableStartCompat="@drawable/ic_mix_shuffle"
+			android:text="@string/menu.shuffle"/>
+	</LinearLayout>
+</LinearLayout>

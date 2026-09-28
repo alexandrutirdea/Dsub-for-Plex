@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+	The row behind a drawer entry: a rounded pill tinted with the accent when it is the
+	destination we are on, nothing at all otherwise. Replaces the full-bleed grey block
+	the platform drew, which read as a selection rectangle from a much older Android.
+-->
+<!-- A neutral grey press, rather than the theme's own highlight: this drawable is
+     inflated before a theme is attached, and a mid grey reads on black and on white. -->
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+	android:color="#33888888">
+
+	<item android:id="@android:id/mask">
+		<shape android:shape="rectangle">
+			<corners android:radius="24dp"/>
+			<solid android:color="#FFFFFFFF"/>
+		</shape>
+	</item>
+
+	<item>
+		<selector>
+			<item android:state_checked="true">
+				<shape android:shape="rectangle">
+					<corners android:radius="24dp"/>
+					<!-- The accent at 15%: enough to read as a filled pill on both the
+					     black surfaces and the white ones. -->
+					<solid android:color="#26FF3B30"/>
+				</shape>
+			</item>
+			<item>
+				<color android:color="@android:color/transparent"/>
+			</item>
+		</selector>
+	</item>
+</ripple>

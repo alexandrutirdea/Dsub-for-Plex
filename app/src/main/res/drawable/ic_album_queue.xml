@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+	Add the album to the end of the queue: a list with a plus where its last row would
+	be. Accent red, since this one sits on the outlined pill rather than the filled one.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+	android:width="20dp"
+	android:height="20dp"
+	android:viewportWidth="24"
+	android:viewportHeight="24">
+
+	<path
+		android:fillColor="@color/modernAccent"
+		android:pathData="M2,6h12v2H2V6zM2,10h12v2H2V10zM2,14h8v2H2V14zM17,10h2v4h4v2h-4v4h-2v-4h-4v-2h4V10z"/>
+</vector>

@@ -1,0 +1,304 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<style name="BasicButton">
+		<item name="android:background">?attr/selectableItemBackgroundBorderless</item>
+	</style>
+	<style name="NotificationButtonBase">
+		<item name="android:background">?android:selectableItemBackground</item>
+		<item name="android:layout_width">46dip</item>
+		<item name="android:layout_height">fill_parent</item>
+		<item name="android:layout_gravity">center</item>
+		<item name="android:scaleType">fitCenter</item>
+		<item name="android:padding">2dip</item>
+	</style>
+	<style name="NotificationButton" parent="NotificationButtonBase">
+	</style>
+
+	<style name="NotificationButton.ExpandedBase">
+		<item name="android:background">?android:selectableItemBackground</item>
+		<item name="android:layout_width">0dp</item>
+		<item name="android:layout_height">fill_parent</item>
+		<item name="android:layout_weight">1</item>
+		<item name="android:layout_gravity">center</item>
+		<item name="android:scaleType">fitCenter</item>
+	</style>
+
+	<style name="NotificationButton.Expanded" parent="@style/NotificationButton.ExpandedBase">
+		<item name="android:padding">10dip</item>
+	</style>
+
+	<style name="NotificationText.Title" parent="@android:style/TextAppearance.StatusBar.EventContent.Title"></style>
+	<style name="NotificationText.Content" parent="@android:style/TextAppearance.StatusBar.EventContent"></style>
+
+	<style name="NotificationLayoutDivider">
+		<item name="android:divider">?android:listDivider</item>
+	</style>
+	<style name="NotificationDivider">
+		<item name="android:background">?android:dividerHorizontal</item>
+	</style>
+
+	<!--
+		The overflow dots on a row. The icon is small, but the padding widens the button
+		to the 48dp a finger needs: at its natural width it was a 32dp target, and it is
+		the way to every per-item action there is.
+	-->
+	<style name="MoreButton" parent="@style/BasicButton">
+		<item name="android:minWidth">@dimen/TouchTarget.Min</item>
+		<item name="android:paddingLeft">10dp</item>
+		<item name="android:paddingRight">10dp</item>
+	</style>
+
+    <style name="PlaybackControl" parent="@style/BasicButton">
+        <item name="android:scaleType">fitCenter</item>
+        <item name="android:layout_marginLeft">4dip</item>
+        <item name="android:layout_marginRight">4dip</item>
+        <item name="android:layout_width">@dimen/Button</item>
+        <item name="android:layout_height">@dimen/Button</item>
+        <item name="android:contentDescription">@null</item>
+    </style>
+	
+	<style name="PlaybackControl.Small" parent="@style/PlaybackControl">
+        <item name="android:layout_width">@dimen/Button.Small</item>
+        <item name="android:layout_height">@dimen/Button.Small</item>
+    </style>
+
+	<style name="PlaybackControl.Large" parent="@style/PlaybackControl">
+		<item name="android:layout_width">@dimen/Button.Large</item>
+		<item name="android:layout_height">@dimen/Button.Large</item>
+		<item name="android:paddingLeft">3dp</item>
+		<item name="android:paddingRight">3dp</item>
+	</style>
+
+	<style name="PlaybackControl.Match" parent="@style/PlaybackControl">
+		<item name="android:layout_height">match_parent</item>
+		<item name="android:layout_width">wrap_content</item>
+		<item name="android:scaleType">fitCenter</item>
+	</style>
+
+	<style name="PlaybackControl.BottomBar" parent="@style/PlaybackControl.Match">
+		<item name="android:layout_width">0dp</item>
+		<item name="android:layout_weight">1</item>
+	</style>
+
+	<style name="DownloadActionButton" parent="@style/BasicButton">
+		<item name="android:layout_width">wrap_content</item>
+		<item name="android:layout_height">wrap_content</item>
+		<item name="android:textStyle">bold</item>
+		<item name="android:textSize">22sp</item>
+		<item name="android:paddingTop">4dip</item>
+		<item name="android:paddingBottom">4dip</item>
+		<item name="android:paddingRight">4dip</item>
+		<item name="android:paddingLeft">4dip</item>
+	</style>
+
+	<style name="DownloadActionImageButton" parent="@style/BasicButton">
+		<item name="android:layout_width">wrap_content</item>
+		<item name="android:layout_height">wrap_content</item>
+		<item name="android:paddingTop">8dip</item>
+		<item name="android:paddingBottom">8dip</item>
+		<item name="android:paddingRight">16dip</item>
+		<item name="android:paddingLeft">16dip</item>
+	</style>
+
+	<!--
+		The type ramp for lists. Three sizes, named once, so a row does not have to invent
+		one: a title, the line under it, and the numbers and suffixes at the edges. Rows
+		used to reach for textAppearanceMedium and textAppearanceSmall independently,
+		which is how album rows ended up three points larger than the track rows they sit
+		one screen away from. Section headers stay their own size - a header is not a row.
+	-->
+	<style name="ListText"/>
+
+	<style name="ListText.Title">
+		<item name="android:textSize">16sp</item>
+		<item name="android:textColor">?android:textColorPrimary</item>
+	</style>
+
+	<style name="ListText.Body">
+		<item name="android:textSize">16sp</item>
+		<item name="android:textColor">?android:textColorPrimary</item>
+	</style>
+
+	<!--
+		The second line of a row: an artist, a year, a duration. 14sp rather than the 12sp
+		it was - a four point drop from the title read as fine print, and the themes only
+		lift this text to 70% of the ground colour, so the two together were hard work.
+	-->
+	<style name="ListText.Caption">
+		<item name="android:textSize">14sp</item>
+		<item name="android:textColor">?android:textColorSecondary</item>
+	</style>
+
+	<!--
+		Bottom navigation labels. A point under the platform default because five
+		destinations divide a phone into 72dp columns and "Collections" does not fit one
+		at 12sp - it came out as "Collecti...", which costs the full width of the tab and
+		gives back a word nobody can read. Shrinking the label keeps all five readable;
+		hiding the unselected ones would have left the icons to carry it alone.
+	-->
+	<style name="BottomNavLabel" parent="@style/TextAppearance.AppCompat.Caption">
+		<item name="android:textSize">10sp</item>
+	</style>
+
+	<style name="BottomNavLabel.Active">
+		<item name="android:textStyle">bold</item>
+	</style>
+
+	<style name="Home"/>
+
+	<style name="Home.SectionHeader">
+		<item name="android:textSize">22sp</item>
+		<item name="android:textStyle">bold</item>
+		<item name="android:textColor">?android:textColorPrimary</item>
+		<item name="android:paddingLeft">@dimen/List.Keyline</item>
+		<item name="android:paddingRight">@dimen/List.Keyline</item>
+		<item name="android:paddingTop">24dp</item>
+		<item name="android:paddingBottom">12dp</item>
+	</style>
+
+	<!-- Now Playing. Typography is deliberately large and left-aligned: the track
+	     title is the loudest thing on the screen, everything else recedes.
+
+	     This empty base exists so the dotted names below resolve; Android reads
+	     "NowPlaying.Title" as inheriting from a style called "NowPlaying". -->
+	<style name="NowPlaying"/>
+
+	<!-- No singleLine here: the title wraps to two lines and auto-sizes, and
+	     singleLine would silently win over maxLines. The title is the one red
+	     thing on Now Playing - bright accent red against the dark album-art
+	     backdrop, while artist, album and the rest stay white. -->
+	<style name="NowPlaying.Title">
+		<item name="android:textSize">27sp</item>
+		<item name="android:textStyle">bold</item>
+		<item name="android:textColor">@color/modernAccent</item>
+		<item name="android:ellipsize">end</item>
+	</style>
+
+	<style name="NowPlaying.Artist">
+		<item name="android:textSize">22sp</item>
+		<item name="android:textColor">?attr/npTextSecondary</item>
+		<item name="android:singleLine">true</item>
+		<item name="android:ellipsize">end</item>
+	</style>
+
+	<style name="NowPlaying.Album">
+		<item name="android:textSize">17sp</item>
+		<item name="android:textColor">?attr/npTextTertiary</item>
+		<item name="android:singleLine">true</item>
+		<item name="android:ellipsize">end</item>
+	</style>
+
+	<!-- Technical detail, deliberately the quietest thing on the screen. -->
+	<style name="NowPlaying.Format">
+		<item name="android:textSize">11sp</item>
+		<item name="android:textColor">?attr/npTextQuiet</item>
+		<item name="android:letterSpacing">0.04</item>
+		<item name="android:singleLine">true</item>
+		<item name="android:ellipsize">end</item>
+	</style>
+
+	<style name="NowPlaying.LyricLine">
+		<item name="android:textSize">19sp</item>
+		<item name="android:textColor">?attr/npTextTertiary</item>
+		<item name="android:paddingTop">7dp</item>
+		<item name="android:paddingBottom">7dp</item>
+		<item name="android:lineSpacingExtra">2dp</item>
+	</style>
+
+	<style name="NowPlaying.Time">
+		<item name="android:textSize">12sp</item>
+		<item name="android:textColor">?attr/npTextTertiary</item>
+		<item name="android:singleLine">true</item>
+	</style>
+
+	<!--
+		The white disc. Icon is inset well away from the edge so the disc reads as
+		the shape and the glyph as a mark on it.
+
+		These three styles used to declare contentDescription="@null", which told
+		screen readers the transport row was decoration and left every control on the
+		screen unannounced. The descriptions belong on the views, where each button
+		can say what it actually does.
+	-->
+	<style name="NowPlaying.PrimaryButton" parent="@style/BasicButton">
+		<item name="android:layout_width">72dp</item>
+		<item name="android:layout_height">72dp</item>
+		<item name="android:scaleType">fitCenter</item>
+		<item name="android:background">@drawable/np_play_circle</item>
+		<item name="android:padding">18dp</item>
+	</style>
+
+	<style name="NowPlaying.SecondaryButton" parent="@style/BasicButton">
+		<item name="android:layout_width">56dp</item>
+		<item name="android:layout_height">56dp</item>
+		<item name="android:scaleType">fitCenter</item>
+		<item name="android:padding">8dp</item>
+		<item name="android:layout_marginLeft">6dp</item>
+		<item name="android:layout_marginRight">6dp</item>
+	</style>
+
+	<style name="NowPlaying.TertiaryButton" parent="@style/BasicButton">
+		<item name="android:layout_width">48dp</item>
+		<item name="android:layout_height">48dp</item>
+		<item name="android:scaleType">fitCenter</item>
+		<item name="android:padding">12dp</item>
+		<item name="android:alpha">0.75</item>
+	</style>
+
+	<!--
+		The two pills above a collection's album list. Both carry a fixed text size rather
+		than auto-sizing: auto-sizing shrank the longer label only, which left the two
+		buttons visibly mismatched. The height is set on the views themselves, since
+		layout_ attributes here are not applied to their layout params.
+	-->
+	<!--
+		The play / add-to-queue pair under an album's details. Primary reuses the collection
+		pill so the two surfaces match; secondary is the outlined counterpart.
+	-->
+	<style name="AlbumActionButton" parent="@style/CollectionActionButton">
+		<item name="android:paddingLeft">18dp</item>
+		<item name="android:paddingRight">18dp</item>
+	</style>
+
+	<style name="AlbumActionButton.Secondary">
+		<item name="android:background">@drawable/album_action_pill_outline</item>
+		<item name="android:textColor">@color/modernAccent</item>
+	</style>
+
+	<!--
+		A filter pill's resting look, for the bars that carry filters next to actions.
+		The state is set again in code as the filter gains or loses a value; this is only
+		so the bar does not flash filled red before that runs.
+	-->
+	<style name="CollectionFilterChip" parent="@style/CollectionActionButton">
+		<item name="android:background">@drawable/collection_filter_pill</item>
+		<item name="android:textColor">@color/filterChipIdle</item>
+	</style>
+
+	<style name="CollectionActionButton">
+		<item name="android:background">@drawable/collection_action_pill</item>
+		<item name="android:textColor">#FFFFFF</item>
+		<item name="android:textSize">13sp</item>
+		<item name="android:textStyle">bold</item>
+		<item name="android:gravity">center</item>
+		<item name="android:paddingLeft">8dp</item>
+		<item name="android:paddingRight">8dp</item>
+		<item name="android:drawablePadding">8dp</item>
+		<item name="android:maxLines">1</item>
+		<item name="android:ellipsize">end</item>
+		<item name="android:clickable">true</item>
+		<item name="android:focusable">true</item>
+	</style>
+
+	<!--
+		Stars in the app's own red rather than the platform blue the Holo widget draws.
+
+		Only the filled star is tinted. The empty one is left the neutral outline it
+		already is: tinting that too paints five red stars whatever the score, which is
+		the one thing the row exists to distinguish.
+	-->
+	<style name="AccentRatingBar.Small" parent="@android:style/Widget.Holo.RatingBar.Small">
+		<item name="android:progressTint">@color/modernAccent</item>
+		<item name="android:secondaryProgressTint">@color/modernAccent</item>
+	</style>
+</resources>

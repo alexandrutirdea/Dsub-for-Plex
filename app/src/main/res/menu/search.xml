@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+	No magnifier in the app bar here: this screen carries its own search field, which
+	follows what is typed into it. A second box that only searches on submit, and by way
+	of a trip out through QueryReceiverActivity and back, is one job offered two ways.
+-->
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+	<item
+		android:id="@+id/menu_exit"
+		android:title="@string/menu.exit"/>
+
+</menu>

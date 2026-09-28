@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<!--
+		The portrait cover is taller than a landscape phone has to spare: the header would
+		fill the screen and the track list would start below the fold.
+	-->
+	<dimen name="AlbumArt.Hero">170dip</dimen>
+</resources>

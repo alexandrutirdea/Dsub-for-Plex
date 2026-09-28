@@ -1,0 +1,55 @@
+package github.daneren2005.dsub.view;
+
+import android.content.Context;
+import android.graphics.Canvas;
+import android.graphics.Path;
+import android.graphics.RectF;
+import android.util.AttributeSet;
+import android.util.Log;
+import android.widget.FrameLayout;
+
+import github.daneren2005.dsub.R;
+import github.daneren2005.dsub.util.DrawableTint;
+
+public class CardView extends FrameLayout{
+	private static final String TAG = CardView.class.getSimpleName();
+
+	public CardView(Context context) {
+		super(context);
+		init(context);
+	}
+
+	public CardView(Context context, AttributeSet attrs) {
+		super(context, attrs);
+		init(context);
+	}
+
+	public CardView(Context context, AttributeSet attrs, int defStyleAttr) {
+		super(context, attrs, defStyleAttr);
+		init(context);
+	}
+
+	public CardView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+		super(context, attrs, defStyleAttr, defStyleRes);
+		init(context);
+	}
+
+	@Override
+	public void onDraw(Canvas canvas) {
+		try {
+			Path clipPath = new Path();
+			float roundedDp = getResources().getDimension(R.dimen.Card_Radius);
+			clipPath.addRoundRect(new RectF(canvas.getClipBounds()), roundedDp, roundedDp, Path.Direction.CW);
+			canvas.clipPath(clipPath);
+		} catch(Exception e) {
+			Log.e(TAG, "Failed to clip path on canvas", e);
+		}
+		super.onDraw(canvas);
+	}
+
+	private void init(Context context) {
+		setClipChildren(true);
+		setBackgroundResource(DrawableTint.getDrawableRes(context, R.attr.cardBackgroundDrawable));
+		setElevation(getResources().getInteger(R.integer.Card_Elevation));
+	}
+}

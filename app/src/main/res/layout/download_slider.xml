@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+	Scrubber with elapsed on the left and time remaining on the right. The times sit
+	below the bar rather than beside it so the bar can run the full width.
+-->
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/download_slider"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+	android:orientation="vertical"
+	android:background="@android:color/transparent"
+	android:paddingLeft="20dip"
+	android:paddingRight="20dip"
+	android:paddingTop="18dip">
+
+	<SeekBar
+		android:id="@+id/download_progress_bar"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:indeterminate="false"
+		android:progressDrawable="@drawable/np_seek_progress"
+		android:thumb="@drawable/np_seek_thumb"
+		android:splitTrack="false"
+		android:maxHeight="6dp"
+		android:minHeight="6dp"
+		android:paddingLeft="0dp"
+		android:paddingRight="0dp"/>
+
+	<RelativeLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_marginTop="2dip">
+
+		<TextView
+			android:id="@+id/download_position"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_alignParentLeft="true"
+			android:text="0:00"
+			style="@style/NowPlaying.Time"/>
+
+		<TextView
+			android:id="@+id/download_duration"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_alignParentRight="true"
+			android:text="-:--"
+			style="@style/NowPlaying.Time"/>
+	</RelativeLayout>
+</LinearLayout>

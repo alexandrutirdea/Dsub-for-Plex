@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+			  xmlns:app="http://schemas.android.com/apk/res-auto"
+			  android:id="@id/drag_handle"
+			  android:orientation="horizontal"
+			  android:baselineAligned="false"
+			  android:layout_width="fill_parent"
+			  android:layout_height="wrap_content"
+			  android:background="?attr/selectableItemBackground">
+
+	<!--
+		The 6dp of padding inside means the cover itself starts 6dp in, so the box hangs
+		10dp off the edge to leave the artwork on the same keyline as everything else.
+	-->
+	<RelativeLayout
+		android:layout_width="@dimen/AlbumRow.Art"
+		android:layout_height="@dimen/AlbumRow.Art"
+		android:layout_gravity="center_vertical"
+		android:layout_marginLeft="10dp"
+		android:padding="6dp">
+
+		<!-- The card is only here to round the artwork's corners. -->
+		<com.google.android.material.card.MaterialCardView
+			android:layout_width="match_parent"
+			android:layout_height="match_parent"
+			app:cardCornerRadius="6dp"
+			app:cardElevation="0dp"
+			app:cardBackgroundColor="@android:color/transparent">
+
+			<ImageView
+				android:id="@+id/album_coverart"
+				android:layout_width="match_parent"
+				android:layout_height="match_parent"
+				android:scaleType="centerCrop"/>
+		</com.google.android.material.card.MaterialCardView>
+
+		<RatingBar
+			android:id="@+id/album_rating"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:isIndicator="true"
+			android:layout_centerHorizontal="true"
+			android:numStars="5"
+			style="@android:style/Widget.Holo.RatingBar.Small"
+			android:layout_alignParentBottom="true"
+			android:visibility="gone"/>
+	</RelativeLayout>
+
+	<LinearLayout
+		android:orientation="vertical"
+		android:layout_width="0dip"
+		android:layout_height="wrap_content"
+		android:layout_weight="1"
+		android:layout_gravity="left|center_vertical"
+		android:paddingLeft="@dimen/List.ArtGap"
+		android:paddingRight="3dip">
+
+		<TextView
+			android:id="@+id/album_title"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			style="@style/ListText.Title"
+			android:singleLine="true"
+			android:ellipsize="marquee"
+			android:paddingBottom="4dip"/>
+
+		<TextView
+			android:id="@+id/album_artist"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			style="@style/ListText.Caption"
+			android:singleLine="true"/>
+
+	</LinearLayout>
+
+	<ImageButton
+		android:id="@+id/album_star"
+		android:layout_width="@dimen/Star.Small"
+		android:layout_height="@dimen/Star.Small"
+		android:scaleType="fitCenter"
+		android:layout_gravity="right|center_vertical"
+		android:background="@android:color/transparent"
+		android:focusable="false"
+		android:visibility="gone"/>
+
+	<!-- Whether the album is on the device. See song_list_item for why it is its own view. -->
+	<ImageView
+		android:id="@+id/item_cached"
+		android:layout_width="@dimen/SongStatusIcon"
+		android:layout_height="@dimen/SongStatusIcon"
+		android:layout_gravity="center_vertical"
+		android:layout_marginRight="2dip"
+		android:scaleType="fitCenter"
+		android:contentDescription="@string/song.not_cached"/>
+
+	<ImageView
+		android:id="@+id/item_more"
+		android:src="?attr/download_none"
+		android:layout_width="wrap_content"
+		android:layout_height="fill_parent"
+		android:layout_gravity="right|center_vertical"
+		style="@style/MoreButton"/>
+</LinearLayout>

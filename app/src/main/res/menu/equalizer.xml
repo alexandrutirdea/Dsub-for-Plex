@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+	<item
+		android:id="@+id/menu_search_autoeq"
+		android:title="@string/equalizer.search_autoeq"/>
+
+	<item
+		android:id="@+id/menu_paste_autoeq"
+		android:title="@string/equalizer.paste_autoeq"/>
+
+	<item
+		android:id="@+id/menu_list_autoeq"
+		android:title="@string/equalizer.list_autoeq"/>
+
+	<item
+		android:id="@+id/menu_remove_autoeq"
+		android:title="@string/equalizer.remove_autoeq"/>
+</menu>

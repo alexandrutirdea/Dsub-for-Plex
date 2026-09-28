@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<dimen name="Button">54dip</dimen>
+	<dimen name="Button.Large">60dip</dimen>
+	<dimen name="Button.Small">42dip</dimen>
+	<dimen name="AlbumArt.Small">78dip</dimen>
+	<dimen name="AlbumArt.Header">120dip</dimen>
+	<!--
+		The cover on an album's own screen, where it is the subject rather than a
+		thumbnail beside the text. Landscape overrides it down: there the header competes
+		with the track list for height rather than width.
+	-->
+	<dimen name="AlbumArt.Hero">280dip</dimen>
+	<!-- The smallest a finger reliably hits. -->
+	<dimen name="TouchTarget.Min">48dp</dimen>
+	<dimen name="Star.Small">20dp</dimen>
+	<dimen name="SongStatusIcon">24dp</dimen>
+	<!--
+		Track rows. A step under the platform's list height, so a whole album's worth of
+		titles reaches further down the screen. The artist under the title is usually
+		hidden on an album screen anyway, which leaves the row holding one line of text.
+		The text sizes live in the ListText styles, with every other row's.
+	-->
+	<dimen name="SongRow.Height">54dip</dimen>
+	<!--
+		Album rows, down from the 78dip they shared with chat and user rows. The row is
+		as tall as this box, so it also sets how many albums reach down the screen -
+		seven filled a tall phone. The 6dip of padding inside leaves 60dip of visible
+		cover. Tablets keep their own size.
+	-->
+	<dimen name="AlbumRow.Art">72dip</dimen>
+	<!--
+		The one horizontal margin. Every list row, section header and bar hangs off this,
+		so a title, a cover and a header all start on the same line down the screen; the
+		rows used to sit at 6dip, the art at 0 and the Home headers at 14dp, and the eye
+		caught every change. Rows with leading art keep the art on the keyline and set
+		their text a gap further in.
+	-->
+	<dimen name="List.Keyline">16dp</dimen>
+	<dimen name="List.ArtGap">12dp</dimen>
+	<!-- A row holding one line of text, tall enough to hit with a thumb. -->
+	<dimen name="ListRow.MinHeight">56dp</dimen>
+	<!-- The artist thumbnail on a Library row; circular, so this is its diameter. -->
+	<dimen name="ArtistRow.Art">44dp</dimen>
+	<!-- The same picture on the artist's own screen, where it is the subject. -->
+	<dimen name="ArtistHeader.Art">132dp</dimen>
+	<dimen name="Card.Radius">12dp</dimen>
+	<dimen name="Card.TextLeftPadding">8dp</dimen>
+	<!--
+		The two text boxes on an album cell, in sp so they grow with the font setting -
+		they hold nothing but text, and a box fixed in dp would clip it at the larger
+		sizes. Both are fixed rather than wrap_content because the labels size their own
+		text to fit: a box that measured its text while the text measured the box has
+		nowhere to start, and autosizing simply gives up and draws at the largest size.
+
+		Title is two lines at its largest, artist is one.
+	-->
+	<dimen name="AlbumCell.TitleHeight">36sp</dimen>
+	<dimen name="AlbumCell.ArtistHeight">17sp</dimen>
+	<!--
+		The discs over a cover: the overflow button's is the touch target inset by its
+		margin, and this is the cached cloud matched to it by eye. Both hold a 24dp icon.
+	-->
+	<dimen name="AlbumCell.OverlayIcon">34dp</dimen>
+	<dimen name="Card.MarginsForShadow">2dp</dimen>
+	<dimen name="FastScroller.LeftAlignedMargin">6dp</dimen>
+	<dimen name="FastScroller.NormalBarMargin">4dp</dimen>
+	<dimen name="FastScroller.RightMargin">4dp</dimen>
+</resources>

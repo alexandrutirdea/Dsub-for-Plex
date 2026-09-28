@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- One device in the picker: what it is, what it is called, and whether the audio is on it. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+	android:minHeight="64dp"
+	android:gravity="center_vertical"
+	android:orientation="horizontal"
+	android:paddingLeft="24dp"
+	android:paddingRight="20dp"
+	android:background="?attr/selectableItemBackground">
+
+	<ImageView
+		android:id="@+id/route_icon"
+		android:layout_width="24dp"
+		android:layout_height="24dp"
+		android:layout_marginRight="20dp"
+		android:contentDescription="@null"/>
+
+	<LinearLayout
+		android:layout_width="0dp"
+		android:layout_height="wrap_content"
+		android:layout_weight="1"
+		android:orientation="vertical"
+		android:paddingTop="10dp"
+		android:paddingBottom="10dp">
+
+		<TextView
+			android:id="@+id/route_name"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:ellipsize="end"
+			android:maxLines="1"
+			android:textColor="?android:textColorPrimary"
+			android:textSize="17sp"/>
+
+		<TextView
+			android:id="@+id/route_description"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginTop="2dp"
+			android:ellipsize="end"
+			android:maxLines="1"
+			android:textColor="?android:textColorSecondary"
+			android:textSize="13sp"
+			android:visibility="gone"/>
+	</LinearLayout>
+
+	<ImageView
+		android:id="@+id/route_check"
+		android:layout_width="24dp"
+		android:layout_height="24dp"
+		android:layout_marginLeft="12dp"
+		android:src="@drawable/ic_route_check"
+		android:contentDescription="@null"
+		android:visibility="gone"/>
+
+	<ProgressBar
+		android:id="@+id/route_connecting"
+		android:layout_width="20dp"
+		android:layout_height="20dp"
+		android:layout_marginLeft="14dp"
+		android:layout_marginRight="2dp"
+		android:indeterminateTint="?attr/colorAccent"
+		android:visibility="gone"/>
+</LinearLayout>

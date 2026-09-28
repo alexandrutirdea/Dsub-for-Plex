@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+	Toolbar play. One of the modern icon set: 24dp, filled, white, drawn on the same
+	grid as the rest so the app bar does not mix weights. Only the Black theme points
+	at these; the light themes keep their own dark-on-light set.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+	android:width="24dp"
+	android:height="24dp"
+	android:viewportWidth="24"
+	android:viewportHeight="24">
+	<path
+		android:fillColor="#FFFFFF"
+		android:pathData="M8,5v14l11,-7z"/>
+</vector>

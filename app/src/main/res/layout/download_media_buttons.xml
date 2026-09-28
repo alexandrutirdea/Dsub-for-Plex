@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+	Transport controls: repeat, previous, the white disc, next, queue toggle.
+
+	Icons are tinted through Now Playing theme attributes. On the dark themes the
+	surrounding glyphs are white and the one on the disc is black; the White theme
+	flips them to red glyphs and a white one on the red disc.
+
+	Keep the top and bottom padding equal. The row wraps to the disc's height plus
+	this padding, and the disc is centred in the row's full height - but children
+	are clipped to the content box, which excludes the padding. Any difference
+	between the two values puts the disc off-centre of the box it is clipped to and
+	shaves a flat edge off it: 6dp/14dp cost it 4dp off the bottom, which read as a
+	circle with its bottom cut off.
+-->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="horizontal"
+	android:layout_width="match_parent"
+	android:layout_height="wrap_content"
+	android:paddingLeft="20dp"
+	android:paddingRight="20dp"
+	android:paddingTop="10dp"
+	android:paddingBottom="10dp">
+
+	<ImageButton
+		style="@style/NowPlaying.TertiaryButton"
+		android:id="@+id/download_repeat"
+		android:contentDescription="@string/download.repeat_off"
+		android:src="?attr/media_button_repeat_off"
+		android:tint="?attr/npTextPrimary"
+		android:layout_alignParentLeft="true"
+		android:layout_centerVertical="true"/>
+
+	<github.daneren2005.dsub.view.AutoRepeatButton
+		style="@style/NowPlaying.SecondaryButton"
+		android:id="@+id/download_previous"
+		android:contentDescription="@string/download.action_previous"
+		android:src="?attr/media_button_backward"
+		android:tint="?attr/npTextPrimary"
+		android:layout_toLeftOf="@+id/download_pause"
+		android:layout_centerVertical="true"/>
+
+	<github.daneren2005.dsub.view.AutoRepeatButton
+		style="@style/NowPlaying.SecondaryButton"
+		android:id="@+id/download_rewind"
+		android:contentDescription="@string/download.action_rewind"
+		android:src="?attr/media_button_rewind"
+		android:tint="?attr/npTextPrimary"
+		android:layout_toLeftOf="@+id/download_pause"
+		android:layout_centerVertical="true"
+		android:visibility="invisible"/>
+
+	<ImageButton
+		style="@style/NowPlaying.PrimaryButton"
+		android:id="@+id/download_pause"
+		android:contentDescription="@string/download.action_pause"
+		android:src="@drawable/media_pause_light"
+		android:tint="?attr/npPlayGlyphTint"
+		android:layout_centerInParent="true"
+		android:visibility="invisible"/>
+
+	<ImageButton
+		style="@style/NowPlaying.PrimaryButton"
+		android:id="@+id/download_stop"
+		android:contentDescription="@string/download.action_stop"
+		android:src="@drawable/media_stop_light"
+		android:tint="?attr/npPlayGlyphTint"
+		android:layout_centerInParent="true"
+		android:visibility="invisible"/>
+
+	<ImageButton
+		style="@style/NowPlaying.PrimaryButton"
+		android:id="@+id/download_start"
+		android:contentDescription="@string/download.action_play"
+		android:src="@drawable/media_start_light"
+		android:tint="?attr/npPlayGlyphTint"
+		android:layout_centerInParent="true"/>
+
+	<github.daneren2005.dsub.view.AutoRepeatButton
+		style="@style/NowPlaying.SecondaryButton"
+		android:id="@+id/download_fastforward"
+		android:contentDescription="@string/download.action_fastforward"
+		android:src="?attr/media_button_fastforward"
+		android:tint="?attr/npTextPrimary"
+		android:layout_toRightOf="@+id/download_start"
+		android:layout_centerVertical="true"
+		android:visibility="invisible"/>
+
+	<github.daneren2005.dsub.view.AutoRepeatButton
+		style="@style/NowPlaying.SecondaryButton"
+		android:id="@+id/download_next"
+		android:contentDescription="@string/download.action_next"
+		android:src="?attr/media_button_forward"
+		android:tint="?attr/npTextPrimary"
+		android:layout_toRightOf="@+id/download_start"
+		android:layout_centerVertical="true"/>
+
+	<ImageButton
+		style="@style/NowPlaying.TertiaryButton"
+		android:id="@+id/download_toggle_list"
+		android:contentDescription="@string/download.action_show_queue"
+		android:src="?attr/toggle_list"
+		android:tint="?attr/npTextPrimary"
+		android:layout_alignParentRight="true"
+		android:layout_centerVertical="true"/>
+</RelativeLayout>

@@ -1,0 +1,1542 @@
+/*
+ This file is part of Subsonic.
+
+ Subsonic is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ Subsonic is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with Subsonic.  If not, see <http://www.gnu.org/licenses/>.
+
+ Copyright 2009 (C) Sindre Mehus
+ */
+package github.daneren2005.dsub.activity;
+
+import android.Manifest;
+import android.app.UiModeManager;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.res.ColorStateList;
+import android.content.res.Configuration;
+import android.content.res.TypedArray;
+import android.graphics.Color;
+import android.media.AudioManager;
+import android.os.Build;
+import android.os.Bundle;
+import android.os.Environment;
+import android.os.Handler;
+import com.google.android.material.navigation.NavigationView;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.appcompat.widget.Toolbar;
+import android.util.Log;
+import android.view.KeyEvent;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
+import android.view.animation.AnimationUtils;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
+import android.widget.ImageView;
+import android.widget.Spinner;
+import android.widget.TextView;
+
+import java.io.File;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
+
+import github.daneren2005.dsub.R;
+import github.daneren2005.dsub.domain.ServerInfo;
+import github.daneren2005.dsub.fragments.AdminFragment;
+import github.daneren2005.dsub.fragments.SubsonicFragment;
+import github.daneren2005.dsub.fragments.UserFragment;
+import github.daneren2005.dsub.service.DownloadService;
+import github.daneren2005.dsub.service.HeadphoneListenerService;
+import github.daneren2005.dsub.service.MusicService;
+import github.daneren2005.dsub.service.MusicServiceFactory;
+import github.daneren2005.dsub.util.AlbumSnapshots;
+import github.daneren2005.dsub.util.Constants;
+import github.daneren2005.dsub.util.DrawableTint;
+import github.daneren2005.dsub.util.FileUtil;
+import github.daneren2005.dsub.util.ImageLoader;
+import github.daneren2005.dsub.util.LoadingTask;
+import github.daneren2005.dsub.util.SilentBackgroundTask;
+import github.daneren2005.dsub.util.ThemeUtil;
+import github.daneren2005.dsub.util.Util;
+import github.daneren2005.dsub.view.UpdateView;
+import github.daneren2005.dsub.util.UserUtil;
+
+import static android.Manifest.*;
+
+public class SubsonicActivity extends AppCompatActivity implements OnItemSelectedListener {
+	private static final String TAG = SubsonicActivity.class.getSimpleName();
+	private static ImageLoader IMAGE_LOADER;
+	protected static String theme;
+	protected static boolean fullScreen;
+	protected static boolean actionbarColored;
+	private static final int MENU_GROUP_SERVER = 10;
+	private static final int MENU_ITEM_SERVER_BASE = 100;
+	public static final int PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE = 1;
+	public static final int PERMISSIONS_REQUEST_LOCATION = 2;
+	public static final int PERMISSIONS_REQUEST_NOTIFICATIONS = 3;
+
+	private final List<Runnable> afterServiceAvailable = new ArrayList<>();
+	private boolean drawerIdle = true;
+	private boolean destroyed = false;
+	private boolean finished = false;
+	protected List<SubsonicFragment> backStack = new ArrayList<SubsonicFragment>();
+	protected SubsonicFragment currentFragment;
+	protected View primaryContainer;
+	protected View secondaryContainer;
+	protected boolean tv = false;
+	protected boolean touchscreen = true;
+	protected Handler handler = new Handler();
+	Spinner actionBarSpinner;
+	ArrayAdapter<CharSequence> spinnerAdapter;
+	ViewGroup rootView;
+	DrawerLayout drawer;
+	ActionBarDrawerToggle drawerToggle;
+	NavigationView drawerList;
+	View drawerHeader;
+	ImageView drawerUserAvatar;
+	ImageView drawerHeaderToggle;
+	TextView drawerServerName;
+	TextView drawerUserName;
+	TextView drawerCacheSize;
+	TextView drawerPermanentCacheSize;
+	int lastSelectedPosition = 0;
+	boolean showingTabs = true;
+	boolean drawerOpen = false;
+	boolean measuringCache = false;
+	SharedPreferences.OnSharedPreferenceChangeListener preferencesListener;
+
+	static {
+		AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_AUTO);
+	}
+
+	@Override
+	protected void onCreate(Bundle bundle) {
+		UiModeManager uiModeManager = (UiModeManager) getSystemService(UI_MODE_SERVICE);
+		if (uiModeManager.getCurrentModeType() == Configuration.UI_MODE_TYPE_TELEVISION) {
+			// tv = true;
+		}
+		PackageManager pm = getPackageManager();
+		if(!pm.hasSystemFeature(PackageManager.FEATURE_TOUCHSCREEN)) {
+			touchscreen = false;
+		}
+
+		setUncaughtExceptionHandler();
+		applyTheme();
+		applyFullscreen();
+		super.onCreate(bundle);
+		DownloadService.startService(this);
+		setVolumeControlStream(AudioManager.STREAM_MUSIC);
+
+		if(getIntent().hasExtra(Constants.FRAGMENT_POSITION)) {
+			lastSelectedPosition = getIntent().getIntExtra(Constants.FRAGMENT_POSITION, 0);
+		}
+
+		if(preferencesListener == null) {
+			preferencesListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
+				@Override
+				public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+					// When changing drawer settings change visibility
+					switch(key) {
+						case Constants.PREFERENCES_KEY_PODCASTS_ENABLED:
+							setDrawerItemVisible(R.id.drawer_podcasts, false);
+							break;
+						case Constants.PREFERENCES_KEY_BOOKMARKS_ENABLED:
+							setDrawerItemVisible(R.id.drawer_bookmarks, false);
+							break;
+						case Constants.PREFERENCES_KEY_INTERNET_RADIO_ENABLED:
+							setDrawerItemVisible(R.id.drawer_internet_radio_stations, false);
+							break;
+						case Constants.PREFERENCES_KEY_SHARED_ENABLED:
+							setDrawerItemVisible(R.id.drawer_shares, false);
+							break;
+						case Constants.PREFERENCES_KEY_CHAT_ENABLED:
+							setDrawerItemVisible(R.id.drawer_chat, false);
+							break;
+						case Constants.PREFERENCES_KEY_ADMIN_ENABLED:
+							setDrawerItemVisible(R.id.drawer_admin, false);
+							break;
+					}
+				}
+			};
+			Util.getPreferences(this).registerOnSharedPreferenceChangeListener(preferencesListener);
+		}
+
+		// From API 29 DSub stores everything under getExternalFilesDir(), which
+		// needs no permission at all, and from API 33 WRITE_EXTERNAL_STORAGE can
+		// no longer be granted -- so asking for it here is auto-denied and then
+		// finish()es the app in onRequestPermissionsResult.
+		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q
+				&& ContextCompat.checkSelfPermission(this, permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+			ActivityCompat.requestPermissions(this, new String[]{ permission.WRITE_EXTERNAL_STORAGE }, PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE);
+		}
+
+		// From API 33 notifications are opt-in, and the playback service's notification is
+		// where the media controls live. The service itself keeps running without it, so
+		// what a refusal costs is the controls in the shade and on the lock screen rather
+		// than the music - which is why this asks but does not insist.
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
+				&& ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+			ActivityCompat.requestPermissions(this, new String[]{ Manifest.permission.POST_NOTIFICATIONS }, PERMISSIONS_REQUEST_NOTIFICATIONS);
+		}
+
+		SharedPreferences prefs = Util.getPreferences(this);
+		int instance = prefs.getInt(Constants.PREFERENCES_KEY_SERVER_INSTANCE, 1);
+		String expectedSSID = prefs.getString(Constants.PREFERENCES_KEY_SERVER_LOCAL_NETWORK_SSID + instance, "");
+		// Being on wifi with no name to put to it means the permission is missing --
+		// getSSID() no longer passes Android's "<unknown ssid>" placeholder through, since
+		// it can now recognise a known network without being told the name.
+		if(!expectedSSID.isEmpty() && Util.isWifiConnected(this) && Util.getSSID(this) == null
+				&& ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+			ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, SubsonicActivity.PERMISSIONS_REQUEST_LOCATION);
+		}
+	}
+
+	@Override
+	public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+		switch (requestCode) {
+			case PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE: {
+				// If request is cancelled, the result arrays are empty.
+				if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+				} else {
+					Util.toast(this, R.string.permission_external_storage_failed);
+					finish();
+				}
+				break;
+			}
+			case PERMISSIONS_REQUEST_LOCATION: {
+				// If request is cancelled, the result arrays are empty.
+				if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+				} else {
+					Util.toast(this, R.string.permission_location_failed);
+				}
+				break;
+			}
+			case PERMISSIONS_REQUEST_NOTIFICATIONS: {
+				// Only worth saying anything when it was actually refused, and only once:
+				// Android stops asking after the second refusal, and a toast on every
+				// launch from then on would be nagging about a decision already made.
+				if (grantResults.length > 0 && grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+					Util.toast(this, R.string.permission_notifications_failed);
+				}
+				break;
+			}
+		}
+	}
+
+	@Override
+	protected void onPostCreate(Bundle savedInstanceState) {
+		super.onPostCreate(savedInstanceState);
+
+		if(spinnerAdapter == null) {
+			createCustomActionBarView();
+		}
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		getSupportActionBar().setHomeButtonEnabled(true);
+
+		// Sync the toggle state after onRestoreInstanceState has occurred.
+		if(drawerToggle != null) {
+			drawerToggle.syncState();
+		}
+
+		if(Util.shouldStartOnHeadphones(this)) {
+			Intent serviceIntent = new Intent();
+			serviceIntent.setClassName(this.getPackageName(), HeadphoneListenerService.class.getName());
+			this.startService(serviceIntent);
+		}
+	}
+
+	protected void createCustomActionBarView() {
+		actionBarSpinner = (Spinner) getLayoutInflater().inflate(R.layout.actionbar_spinner, null);
+		if((this instanceof SubsonicFragmentActivity || this instanceof SettingsActivity) && (Util.getPreferences(this).getBoolean(Constants.PREFERENCES_KEY_COLOR_ACTION_BAR, true) || ThemeUtil.getThemeRes(this) != R.style.Theme_DSub_Light_No_Color)) {
+			actionBarSpinner.setBackgroundDrawable(DrawableTint.getTintedDrawableFromColor(this, R.drawable.abc_spinner_mtrl_am_alpha, android.R.color.white));
+		}
+		spinnerAdapter = new ArrayAdapter(this, android.R.layout.simple_spinner_item);
+		spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		actionBarSpinner.setOnItemSelectedListener(this);
+		actionBarSpinner.setAdapter(spinnerAdapter);
+
+		getSupportActionBar().setCustomView(actionBarSpinner);
+	}
+
+	@Override
+	protected void onStart() {
+		super.onStart();
+		Util.registerMediaButtonEventReceiver(this);
+
+		// Make sure to update theme
+		SharedPreferences prefs = Util.getPreferences(this);
+		if (theme != null && !theme.equals(ThemeUtil.getTheme(this)) || fullScreen != prefs.getBoolean(Constants.PREFERENCES_KEY_FULL_SCREEN, false) || actionbarColored != prefs.getBoolean(Constants.PREFERENCES_KEY_COLOR_ACTION_BAR, true)) {
+			restart();
+			overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
+			DrawableTint.clearCache();
+			return;
+		}
+
+		getImageLoader().onUIVisible();
+		UpdateView.addActiveActivity();
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+
+		// If this is in onStart is causes crashes when rotating screen in offline mode
+		// Actual root cause of error is `drawerItemSelected(newFragment);` in the offline mode branch of code
+		populateTabs();
+	}
+
+	@Override
+	protected void onStop() {
+		super.onStop();
+
+		UpdateView.removeActiveActivity();
+	}
+
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		destroyed = true;
+		Util.getPreferences(this).unregisterOnSharedPreferenceChangeListener(preferencesListener);
+	}
+
+	@Override
+	public void finish() {
+		super.finish();
+		Util.disablePendingTransition(this);
+	}
+
+	@Override
+	public void setContentView(int viewId) {
+		if(isTv()) {
+			super.setContentView(R.layout.static_drawer_activity);
+		} else if(Util.getPreferences(this).getBoolean(Constants.PREFERENCES_KEY_FULL_SCREEN, false)) {
+			super.setContentView(R.layout.abstract_fullscreen_activity);
+		} else {
+			super.setContentView(R.layout.abstract_activity);
+		}
+		rootView = (ViewGroup) findViewById(R.id.content_frame);
+
+		if(viewId != 0) {
+			LayoutInflater layoutInflater = getLayoutInflater();
+			layoutInflater.inflate(viewId, rootView);
+		}
+
+		drawerList = (NavigationView) findViewById(R.id.left_drawer);
+		tintDrawerItems();
+		drawerList.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+			@Override
+			public boolean onNavigationItemSelected(final MenuItem menuItem) {
+				if(showingTabs) {
+					// Settings are on a different selectable track
+					if (menuItem.getItemId() != R.id.drawer_settings && menuItem.getItemId() != R.id.drawer_admin && menuItem.getItemId() != R.id.drawer_offline
+							&& menuItem.getItemId() != R.id.drawer_clear_cache
+								&& menuItem.getItemId() != R.id.drawer_downloaded_albums
+								&& menuItem.getItemId() != R.id.drawer_delete_permanent_cache) {
+						menuItem.setChecked(true);
+						lastSelectedPosition = menuItem.getItemId();
+					}
+
+					switch (menuItem.getItemId()) {
+						case R.id.drawer_home:
+							drawerItemSelected("Home");
+							return true;
+						case R.id.drawer_library:
+							drawerItemSelected("Artist");
+							return true;
+						case R.id.drawer_collections:
+							drawerItemSelected("Collection");
+							return true;
+						case R.id.drawer_playlists:
+							drawerItemSelected("Playlist");
+							return true;
+						case R.id.drawer_podcasts:
+							drawerItemSelected("Podcast");
+							return true;
+						case R.id.drawer_bookmarks:
+							drawerItemSelected("Bookmark");
+							return true;
+						case R.id.drawer_internet_radio_stations:
+							drawerItemSelected("Internet Radio");
+							return true;
+						case R.id.drawer_shares:
+							drawerItemSelected("Share");
+							return true;
+						case R.id.drawer_chat:
+							drawerItemSelected("Chat");
+							return true;
+						case R.id.drawer_admin:
+							if (UserUtil.isCurrentAdmin()) {
+								UserUtil.confirmCredentials(SubsonicActivity.this, new Runnable() {
+									@Override
+									public void run() {
+										drawerItemSelected("Admin");
+										menuItem.setChecked(true);
+										lastSelectedPosition = menuItem.getItemId();
+									}
+								});
+							} else {
+								drawerItemSelected("Admin");
+								menuItem.setChecked(true);
+								lastSelectedPosition = menuItem.getItemId();
+							}
+							return true;
+						case R.id.drawer_equalizer:
+							drawerItemSelected("Equalizer");
+							return true;
+						case R.id.drawer_downloading:
+							drawerItemSelected("Download");
+							return true;
+						case R.id.drawer_offline:
+							toggleOffline();
+							return true;
+						case R.id.drawer_clear_cache:
+							confirmClearCache();
+							return true;
+						case R.id.drawer_delete_permanent_cache:
+							confirmDeletePermanentCache();
+							return true;
+						case R.id.drawer_downloaded_albums:
+							drawerItemSelected("Downloaded albums");
+							return true;
+						case R.id.drawer_settings:
+							startActivity(new Intent(SubsonicActivity.this, SettingsActivity.class));
+							drawer.closeDrawers();
+							return true;
+					}
+				} else {
+					int activeServer = menuItem.getItemId() - MENU_ITEM_SERVER_BASE;
+					SubsonicActivity.this.setActiveServer(activeServer);
+					populateTabs();
+					return true;
+				}
+
+				return false;
+			}
+		});
+
+		drawerHeader = drawerList.inflateHeaderView(R.layout.drawer_header);
+		insetDrawerHeader();
+		drawerHeader.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				if(showingTabs) {
+					populateServers();
+				} else {
+					populateTabs();
+				}
+			}
+		});
+
+		drawerHeaderToggle = (ImageView) drawerHeader.findViewById(R.id.header_select_image);
+		drawerServerName = (TextView) drawerHeader.findViewById(R.id.header_server_name);
+		drawerUserName = (TextView) drawerHeader.findViewById(R.id.header_user_name);
+
+		drawerUserAvatar = (ImageView) drawerHeader.findViewById(R.id.header_user_avatar);
+
+		updateDrawerHeader();
+
+		if(!isTv()) {
+			drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+
+			// Pass in toolbar if it exists
+			Toolbar toolbar = (Toolbar) findViewById(R.id.main_toolbar);
+			drawerToggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.common_appname, R.string.common_appname) {
+				@Override
+				public void onDrawerClosed(View view) {
+					drawerIdle = true;
+					drawerOpen = false;
+
+					if(!showingTabs) {
+						populateTabs();
+					}
+				}
+
+				@Override
+				public void onDrawerOpened(View view) {
+					DownloadService downloadService = getDownloadService();
+					boolean downloadingVisible = downloadService != null && !downloadService.getBackgroundDownloads().isEmpty();
+					if(lastSelectedPosition == R.id.drawer_downloading) {
+						downloadingVisible = true;
+					}
+					setDrawerItemVisible(R.id.drawer_downloading, downloadingVisible);
+					updateCacheSize();
+
+					drawerIdle = true;
+					drawerOpen = true;
+				}
+
+				@Override
+				public void onDrawerSlide(View drawerView, float slideOffset) {
+					super.onDrawerSlide(drawerView, slideOffset);
+					drawerIdle = false;
+				}
+			};
+			drawer.setDrawerListener(drawerToggle);
+			drawerToggle.setDrawerIndicatorEnabled(true);
+
+			drawer.setOnTouchListener(new View.OnTouchListener() {
+				public boolean onTouch(View v, MotionEvent event) {
+					if (drawerIdle && currentFragment != null && currentFragment.getGestureDetector() != null) {
+						return currentFragment.getGestureDetector().onTouchEvent(event);
+					} else {
+						return false;
+					}
+				}
+			});
+		}
+
+		// Check whether this is a tablet or not
+		secondaryContainer = findViewById(R.id.fragment_second_container);
+		if(secondaryContainer != null) {
+			primaryContainer = findViewById(R.id.fragment_container);
+		}
+	}
+
+	@Override
+	public void onSaveInstanceState(Bundle savedInstanceState) {
+		super.onSaveInstanceState(savedInstanceState);
+		String[] ids = new String[backStack.size() + 1];
+		ids[0] = currentFragment.getTag();
+		int i = 1;
+		for(SubsonicFragment frag: backStack) {
+			ids[i] = frag.getTag();
+			i++;
+		}
+		savedInstanceState.putStringArray(Constants.MAIN_BACK_STACK, ids);
+		savedInstanceState.putInt(Constants.MAIN_BACK_STACK_SIZE, backStack.size() + 1);
+		savedInstanceState.putInt(Constants.FRAGMENT_POSITION, lastSelectedPosition);
+	}
+	@Override
+	public void onRestoreInstanceState(Bundle savedInstanceState) {
+		super.onRestoreInstanceState(savedInstanceState);
+		int size = savedInstanceState.getInt(Constants.MAIN_BACK_STACK_SIZE);
+		String[] ids = savedInstanceState.getStringArray(Constants.MAIN_BACK_STACK);
+		FragmentManager fm = getSupportFragmentManager();
+		currentFragment = (SubsonicFragment)fm.findFragmentByTag(ids[0]);
+		currentFragment.setPrimaryFragment(true);
+		currentFragment.setSupportTag(ids[0]);
+		supportInvalidateOptionsMenu();
+		FragmentTransaction trans = getSupportFragmentManager().beginTransaction();
+		for(int i = 1; i < size; i++) {
+			SubsonicFragment frag = (SubsonicFragment)fm.findFragmentByTag(ids[i]);
+			frag.setSupportTag(ids[i]);
+			if(secondaryContainer != null) {
+				frag.setPrimaryFragment(false, true);
+			}
+			trans.hide(frag);
+			backStack.add(frag);
+		}
+		trans.commit();
+
+		// Current fragment is hidden in secondaryContainer
+		if(secondaryContainer == null && !currentFragment.isVisible()) {
+			trans = getSupportFragmentManager().beginTransaction();
+			trans.remove(currentFragment);
+			trans.commit();
+			getSupportFragmentManager().executePendingTransactions();
+
+			trans = getSupportFragmentManager().beginTransaction();
+			trans.add(R.id.fragment_container, currentFragment, ids[0]);
+			trans.commit();
+		}
+		// Current fragment needs to be moved over to secondaryContainer
+		else if(secondaryContainer != null && secondaryContainer.findViewById(currentFragment.getRootId()) == null && backStack.size() > 0) {
+			trans = getSupportFragmentManager().beginTransaction();
+			trans.remove(currentFragment);
+			trans.show(backStack.get(backStack.size() - 1));
+			trans.commit();
+			getSupportFragmentManager().executePendingTransactions();
+
+			trans = getSupportFragmentManager().beginTransaction();
+			trans.add(R.id.fragment_second_container, currentFragment, ids[0]);
+			trans.commit();
+
+			secondaryContainer.setVisibility(View.VISIBLE);
+		}
+
+		lastSelectedPosition = savedInstanceState.getInt(Constants.FRAGMENT_POSITION);
+		if(lastSelectedPosition != 0) {
+			MenuItem item = drawerList.getMenu().findItem(lastSelectedPosition);
+			if(item != null) {
+				item.setChecked(true);
+			}
+		}
+		recreateSpinner();
+	}
+
+	@Override
+	public void onNewIntent(Intent intent) {
+		super.onNewIntent(intent);
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		MenuInflater menuInflater = getMenuInflater();
+		SubsonicFragment currentFragment = getCurrentFragment();
+		if(currentFragment != null) {
+			try {
+				SubsonicFragment fragment = getCurrentFragment();
+				fragment.setContext(this);
+				fragment.onCreateOptionsMenu(menu, menuInflater);
+
+				if(isTouchscreen()) {
+					menu.setGroupVisible(R.id.not_touchscreen, false);
+				}
+			} catch(Exception e) {
+				Log.w(TAG, "Error on creating options menu", e);
+			}
+		}
+		return true;
+	}
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		if(drawerToggle != null && drawerToggle.onOptionsItemSelected(item)) {
+			return true;
+		} else if(item.getItemId() == android.R.id.home) {
+			onBackPressed();
+			return true;
+		}
+
+		return getCurrentFragment().onOptionsItemSelected(item);
+	}
+
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		boolean isVolumeDown = keyCode == KeyEvent.KEYCODE_VOLUME_DOWN;
+		boolean isVolumeUp = keyCode == KeyEvent.KEYCODE_VOLUME_UP;
+		boolean isVolumeAdjust = isVolumeDown || isVolumeUp;
+		boolean isJukebox = getDownloadService() != null && getDownloadService().isRemoteEnabled();
+
+		if (isVolumeAdjust && isJukebox) {
+			getDownloadService().updateRemoteVolume(isVolumeUp);
+			return true;
+		}
+		return super.onKeyDown(keyCode, event);
+	}
+
+	@Override
+	public void setTitle(CharSequence title) {
+		if(title != null && getSupportActionBar() != null && !title.equals(getSupportActionBar().getTitle())) {
+			getSupportActionBar().setTitle(title);
+			recreateSpinner();
+		}
+	}
+	public void setSubtitle(CharSequence title) {
+		getSupportActionBar().setSubtitle(title);
+	}
+
+	@Override
+	public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+		int top = spinnerAdapter.getCount() - 1;
+		if(position < top) {
+			for(int i = top; i > position && i >= 0; i--) {
+				removeCurrent();
+			}
+		}
+	}
+
+	@Override
+	public void onNothingSelected(AdapterView<?> parent) {
+
+	}
+
+	/**
+	 * Pushes the drawer header clear of the status bar.
+	 *
+	 * The header sits inside NavigationView's own list, which keeps the window insets to
+	 * itself - fitsSystemWindows on the header is never acted on - so the clock used to
+	 * sit on top of the server name. The old header hid this by being 178dp tall with
+	 * everything in it aligned to the bottom.
+	 */
+	private void insetDrawerHeader() {
+		int statusBarHeight = 0;
+		int resource = getResources().getIdentifier("status_bar_height", "dimen", "android");
+		if(resource > 0) {
+			statusBarHeight = getResources().getDimensionPixelSize(resource);
+		}
+
+		drawerHeader.setPadding(drawerHeader.getPaddingLeft(), drawerHeader.getPaddingTop() + statusBarHeight,
+				drawerHeader.getPaddingRight(), drawerHeader.getPaddingBottom());
+	}
+
+	/**
+	 * Paints the drawer's icons and labels: the accent for the destination we are on,
+	 * ordinary text colour for the rest.
+	 *
+	 * In code because both colours are theme attributes and the themes here are chosen
+	 * at runtime rather than by resource qualifier - a ColorStateList in XML is inflated
+	 * without a theme to resolve them against, and NavigationView throws when it cannot.
+	 */
+	private void tintDrawerItems() {
+		// Read through a TypedArray rather than resolving the attributes by hand:
+		// textColorPrimary is a colour list, not a colour, and reading its raw value
+		// gives a resource id that paints as nothing.
+		TypedArray attrs = obtainStyledAttributes(new int[]{android.R.attr.textColorPrimary, R.attr.colorAccent});
+		int normal = attrs.getColor(0, Color.WHITE);
+		int accent = attrs.getColor(1, Color.WHITE);
+		attrs.recycle();
+
+		ColorStateList colors = new ColorStateList(
+				new int[][]{new int[]{android.R.attr.state_checked}, new int[0]},
+				new int[]{accent, normal});
+
+		drawerList.setItemIconTintList(colors);
+		drawerList.setItemTextColor(colors);
+	}
+
+	private void populateTabs() {
+		drawerList.getMenu().clear();
+		drawerList.inflateMenu(R.menu.drawer_navigation);
+
+		SharedPreferences prefs = Util.getPreferences(this);
+		// Plex has no equivalent for any of these, so hide them rather than
+		// leaving menu entries that error out when tapped.
+		boolean isPlex = Util.isPlex(this);
+		// Collections are a Plex concept; Subsonic has no equivalent.
+		boolean collectionsEnabled = isPlex && !Util.isOffline(this);
+		boolean podcastsEnabled = prefs.getBoolean(Constants.PREFERENCES_KEY_PODCASTS_ENABLED, true) && !isPlex;
+		boolean bookmarksEnabled = prefs.getBoolean(Constants.PREFERENCES_KEY_BOOKMARKS_ENABLED, true) && !Util.isOffline(this) && !isPlex && ServerInfo.canBookmark(this);
+		boolean internetRadioEnabled = prefs.getBoolean(Constants.PREFERENCES_KEY_INTERNET_RADIO_ENABLED, true) && !Util.isOffline(this) && !isPlex && ServerInfo.canInternetRadio(this);
+		boolean sharedEnabled = prefs.getBoolean(Constants.PREFERENCES_KEY_SHARED_ENABLED, true) && !Util.isOffline(this) && !isPlex;
+		boolean chatEnabled = prefs.getBoolean(Constants.PREFERENCES_KEY_CHAT_ENABLED, true) && !Util.isOffline(this) && !isPlex;
+		boolean adminEnabled = prefs.getBoolean(Constants.PREFERENCES_KEY_ADMIN_ENABLED, true) && !Util.isOffline(this) && !isPlex;
+
+		MenuItem offlineMenuItem = drawerList.getMenu().findItem(R.id.drawer_offline);
+		if(Util.isOffline(this)) {
+			setDrawerItemVisible(R.id.drawer_home, false);
+
+			if(lastSelectedPosition == 0 || lastSelectedPosition == R.id.drawer_home) {
+				String newFragment = Util.openToTab(this);
+				if(newFragment == null || "Home".equals(newFragment)) {
+					newFragment = "Artist";
+				}
+
+				lastSelectedPosition = getDrawerItemId(newFragment);
+				drawerItemSelected(newFragment);
+			}
+
+			offlineMenuItem.setTitle(R.string.main_online);
+		} else {
+			offlineMenuItem.setTitle(R.string.main_offline);
+		}
+
+		if(!collectionsEnabled) {
+			setDrawerItemVisible(R.id.drawer_collections, false);
+		}
+		// Anything else showing a Collections destination has to follow the same rule,
+		// or it becomes a dead entry on a Subsonic server or offline.
+		onCollectionsAvailable(collectionsEnabled);
+		if(!podcastsEnabled) {
+			setDrawerItemVisible(R.id.drawer_podcasts, false);
+		}
+		if(!bookmarksEnabled) {
+			setDrawerItemVisible(R.id.drawer_bookmarks, false);
+		}
+		if(!internetRadioEnabled) {
+			setDrawerItemVisible(R.id.drawer_internet_radio_stations, false);
+		}
+		if(!sharedEnabled) {
+			setDrawerItemVisible(R.id.drawer_shares, false);
+		}
+		if(!chatEnabled) {
+			setDrawerItemVisible(R.id.drawer_chat, false);
+		}
+		if(!adminEnabled) {
+			setDrawerItemVisible(R.id.drawer_admin, false);
+		}
+
+		if(lastSelectedPosition != 0) {
+			MenuItem item = drawerList.getMenu().findItem(lastSelectedPosition);
+			if(item != null) {
+				item.setChecked(true);
+			}
+		}
+		drawerHeaderToggle.setImageResource(R.drawable.main_select_server_dark);
+
+		// The menu is rebuilt from scratch here, so the old row's label is gone with it
+		MenuItem clearCacheItem = drawerList.getMenu().findItem(R.id.drawer_clear_cache);
+		drawerCacheSize = clearCacheItem == null || clearCacheItem.getActionView() == null
+				? null : (TextView) clearCacheItem.getActionView().findViewById(R.id.drawer_cache_size);
+		MenuItem permanentCacheItem = drawerList.getMenu().findItem(R.id.drawer_delete_permanent_cache);
+		drawerPermanentCacheSize = permanentCacheItem == null || permanentCacheItem.getActionView() == null
+				? null : (TextView) permanentCacheItem.getActionView().findViewById(R.id.drawer_cache_size);
+		updateCacheSize();
+
+		showingTabs = true;
+	}
+	private void populateServers() {
+		drawerList.getMenu().clear();
+
+		int serverCount = Util.getServerCount(this);
+		int activeServer = Util.getActiveServer(this);
+		for(int i = 1; i <= serverCount; i++) {
+			MenuItem item = drawerList.getMenu().add(MENU_GROUP_SERVER, MENU_ITEM_SERVER_BASE + i, MENU_ITEM_SERVER_BASE + i, Util.getServerName(this, i));
+			if(activeServer == i) {
+				item.setChecked(true);
+			}
+		}
+		drawerList.getMenu().setGroupCheckable(MENU_GROUP_SERVER, true, true);
+		drawerHeaderToggle.setImageResource(R.drawable.main_select_tabs_dark);
+
+		showingTabs = false;
+	}
+	/** Overridden where a Collections entry exists outside the drawer. */
+	protected void onCollectionsAvailable(boolean available) {}
+
+	private void setDrawerItemVisible(int id, boolean visible) {
+		MenuItem item = drawerList.getMenu().findItem(id);
+		if(item != null) {
+			item.setVisible(visible);
+		}
+	}
+
+	/**
+	 * Puts the size of the cache next to the row that clears it, and the size of the
+	 * permanent downloads next to the row that deletes those.
+	 *
+	 * Measuring them means walking every downloaded file, so it happens off the UI thread
+	 * and only while the drawer is being opened. The old figures stay up until the new ones
+	 * arrive, which reads as a stale number for a moment rather than a flicker.
+	 */
+	private void updateCacheSize() {
+		if((drawerCacheSize == null && drawerPermanentCacheSize == null) || measuringCache) {
+			return;
+		}
+
+		measuringCache = true;
+		new SilentBackgroundTask<long[]>(this) {
+			@Override
+			protected long[] doInBackground() throws Throwable {
+				return new long[] {
+						FileUtil.getCacheSize(SubsonicActivity.this),
+						FileUtil.getPermanentCacheSize(SubsonicActivity.this)
+				};
+			}
+
+			@Override
+			protected void done(long[] sizes) {
+				measuringCache = false;
+				if(drawerCacheSize != null) {
+					drawerCacheSize.setText(Util.formatLocalizedBytes(sizes[0], SubsonicActivity.this));
+				}
+				if(drawerPermanentCacheSize != null) {
+					drawerPermanentCacheSize.setText(Util.formatLocalizedBytes(sizes[1], SubsonicActivity.this));
+				}
+			}
+
+			@Override
+			protected void error(Throwable error) {
+				measuringCache = false;
+				Log.w(TAG, "Failed to measure the cache", error);
+			}
+		}.execute();
+	}
+
+	private void confirmClearCache() {
+		Util.confirmDialog(this, R.string.common_delete, R.string.common_confirm_message_cache, new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				new LoadingTask<Void>(SubsonicActivity.this, false) {
+					@Override
+					protected Void doInBackground() throws Throwable {
+						// Songs downloaded permanently stay, and so does what is known about
+						// their albums; Delete permanent cache is the row for those.
+						FileUtil.deleteCachedSongs(SubsonicActivity.this);
+						FileUtil.deleteSerializedCache(SubsonicActivity.this, AlbumSnapshots.CACHE_NAME);
+						FileUtil.deleteArtworkCache(SubsonicActivity.this);
+						FileUtil.deleteAvatarCache(SubsonicActivity.this);
+						return null;
+					}
+
+					@Override
+					protected void done(Void result) {
+						Util.toast(SubsonicActivity.this, R.string.settings_cache_clear_complete);
+						updateCacheSize();
+						if(drawer != null) {
+							drawer.closeDrawers();
+						}
+					}
+
+					@Override
+					protected void error(Throwable error) {
+						Util.toast(SubsonicActivity.this, getErrorMessage(error), false);
+						updateCacheSize();
+					}
+				}.execute();
+			}
+		});
+	}
+
+	/**
+	 * Deletes what Clear Cache leaves alone: every song downloaded permanently. A row and a
+	 * confirmation of its own, because these are the downloads that were chosen on purpose.
+	 */
+	private void confirmDeletePermanentCache() {
+		Util.confirmDialog(this, R.string.common_delete, R.string.common_confirm_message_permanent_cache, new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				new LoadingTask<Void>(SubsonicActivity.this, false) {
+					@Override
+					protected Void doInBackground() throws Throwable {
+						FileUtil.deletePermanentSongs(SubsonicActivity.this);
+						return null;
+					}
+
+					@Override
+					protected void done(Void result) {
+						Util.toast(SubsonicActivity.this, R.string.settings_cache_delete_permanent_complete);
+						updateCacheSize();
+						if(drawer != null) {
+							drawer.closeDrawers();
+						}
+					}
+
+					@Override
+					protected void error(Throwable error) {
+						Util.toast(SubsonicActivity.this, getErrorMessage(error), false);
+						updateCacheSize();
+					}
+				}.execute();
+			}
+		});
+	}
+
+	protected void drawerItemSelected(String fragmentType) {
+		if(currentFragment != null) {
+			currentFragment.stopActionMode();
+		}
+		startFragmentActivity(fragmentType);
+	}
+
+	public void startFragmentActivity(String fragmentType) {
+		Intent intent = new Intent();
+		intent.setClass(SubsonicActivity.this, SubsonicFragmentActivity.class);
+		intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+		if(!"".equals(fragmentType)) {
+			intent.putExtra(Constants.INTENT_EXTRA_FRAGMENT_TYPE, fragmentType);
+		}
+		if(lastSelectedPosition != 0) {
+			intent.putExtra(Constants.FRAGMENT_POSITION, lastSelectedPosition);
+		}
+		startActivity(intent);
+		finish();
+	}
+
+	protected void exit() {
+		if(((Object) this).getClass() != SubsonicFragmentActivity.class) {
+			Intent intent = new Intent(this, SubsonicFragmentActivity.class);
+			intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+			intent.putExtra(Constants.INTENT_EXTRA_NAME_EXIT, true);
+			Util.startActivityWithoutTransition(this, intent);
+		} else {
+			finished = true;
+			this.stopService(new Intent(this, DownloadService.class));
+			this.finish();
+		}
+	}
+
+	public boolean onBackPressedSupport() {
+		if(drawerOpen) {
+			drawer.closeDrawers();
+			return false;
+		} else if(backStack.size() > 0) {
+			removeCurrent();
+			return false;
+		} else {
+			return true;
+		}
+	}
+
+	@Override
+	public void onBackPressed() {
+		if(onBackPressedSupport()) {
+			super.onBackPressed();
+		}
+	}
+
+	public SubsonicFragment getCurrentFragment() {
+		return this.currentFragment;
+	}
+
+	public void replaceFragment(SubsonicFragment fragment, int tag) {
+		replaceFragment(fragment, tag, false);
+	}
+	public void replaceFragment(SubsonicFragment fragment, int tag, boolean replaceCurrent) {
+		SubsonicFragment oldFragment = currentFragment;
+		if(currentFragment != null) {
+			currentFragment.setPrimaryFragment(false, secondaryContainer != null);
+		}
+		backStack.add(currentFragment);
+
+		currentFragment = fragment;
+		currentFragment.setPrimaryFragment(true);
+		supportInvalidateOptionsMenu();
+
+		if(secondaryContainer == null || oldFragment.isAlwaysFullscreen() || currentFragment.isAlwaysStartFullscreen()) {
+			FragmentTransaction trans = getSupportFragmentManager().beginTransaction();
+			trans.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right);
+			trans.hide(oldFragment);
+			trans.add(R.id.fragment_container, fragment, tag + "");
+			trans.commit();
+		} else {
+			// Make sure secondary container is visible now
+			secondaryContainer.setVisibility(View.VISIBLE);
+
+			FragmentTransaction trans = getSupportFragmentManager().beginTransaction();
+
+			// Check to see if you need to put on top of old left or not
+			if(backStack.size() > 1) {
+				// Move old right to left if there is a backstack already
+				SubsonicFragment newLeftFragment = backStack.get(backStack.size() - 1);
+				if(replaceCurrent) {
+					// trans.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right);
+				}
+				trans.remove(newLeftFragment);
+
+				// Only move right to left if replaceCurrent is false
+				if(!replaceCurrent) {
+					SubsonicFragment oldLeftFragment = backStack.get(backStack.size() - 2);
+					oldLeftFragment.setSecondaryFragment(false);
+					// trans.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right);
+					trans.hide(oldLeftFragment);
+
+					// Make sure remove is finished before adding
+					trans.commit();
+					getSupportFragmentManager().executePendingTransactions();
+
+					trans = getSupportFragmentManager().beginTransaction();
+					// trans.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right);
+					trans.add(R.id.fragment_container, newLeftFragment, newLeftFragment.getSupportTag() + "");
+				} else {
+					backStack.remove(backStack.size() - 1);
+				}
+			}
+
+			// Add fragment to the right container
+			trans.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right);
+			trans.add(R.id.fragment_second_container, fragment, tag + "");
+
+			// Commit it all
+			trans.commit();
+
+			oldFragment.setIsOnlyVisible(false);
+			currentFragment.setIsOnlyVisible(false);
+		}
+		recreateSpinner();
+	}
+	public void removeCurrent() {
+		// Don't try to remove current if there is no backstack to remove from
+		if(backStack.isEmpty()) {
+			return;
+		}
+
+		if(currentFragment != null) {
+			currentFragment.setPrimaryFragment(false);
+		}
+		SubsonicFragment oldFragment = currentFragment;
+
+		currentFragment = backStack.remove(backStack.size() - 1);
+		currentFragment.setPrimaryFragment(true, false);
+		supportInvalidateOptionsMenu();
+
+		if(secondaryContainer == null || currentFragment.isAlwaysFullscreen() || oldFragment.isAlwaysStartFullscreen()) {
+			FragmentTransaction trans = getSupportFragmentManager().beginTransaction();
+			trans.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_right, R.anim.enter_from_right, R.anim.exit_to_left);
+			trans.remove(oldFragment);
+			trans.show(currentFragment);
+			trans.commit();
+		} else {
+			FragmentTransaction trans = getSupportFragmentManager().beginTransaction();
+
+			// Remove old right fragment
+			trans.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_right, R.anim.enter_from_right, R.anim.exit_to_left);
+			trans.remove(oldFragment);
+
+			// Only switch places if there is a backstack, otherwise primary container is correct
+			if(backStack.size() > 0 && !backStack.get(backStack.size() - 1).isAlwaysFullscreen() && !currentFragment.isAlwaysStartFullscreen()) {
+				trans.setCustomAnimations(0, 0, 0, 0);
+				// Add current left fragment to right side
+				trans.remove(currentFragment);
+
+				// Make sure remove is finished before adding
+				trans.commit();
+				getSupportFragmentManager().executePendingTransactions();
+
+				trans = getSupportFragmentManager().beginTransaction();
+				// trans.setCustomAnimations(R.anim.enter_from_left, R.anim.exit_to_right, R.anim.enter_from_right, R.anim.exit_to_left);
+				trans.add(R.id.fragment_second_container, currentFragment, currentFragment.getSupportTag() + "");
+
+				SubsonicFragment newLeftFragment = backStack.get(backStack.size() - 1);
+				newLeftFragment.setSecondaryFragment(true);
+				trans.show(newLeftFragment);
+			} else {
+				secondaryContainer.startAnimation(AnimationUtils.loadAnimation(this, R.anim.exit_to_right));
+				secondaryContainer.setVisibility(View.GONE);
+
+				currentFragment.setIsOnlyVisible(true);
+			}
+
+			trans.commit();
+		}
+		recreateSpinner();
+	}
+	public void replaceExistingFragment(SubsonicFragment fragment, int tag) {
+		FragmentTransaction trans = getSupportFragmentManager().beginTransaction();
+		trans.remove(currentFragment);
+		trans.add(R.id.fragment_container, fragment, tag + "");
+		trans.commit();
+
+		currentFragment = fragment;
+		currentFragment.setPrimaryFragment(true);
+		supportInvalidateOptionsMenu();
+	}
+
+	public void invalidate() {
+		if(currentFragment != null) {
+			while(backStack.size() > 0) {
+				removeCurrent();
+			}
+
+			if(currentFragment instanceof UserFragment || currentFragment instanceof AdminFragment) {
+				restart(false);
+			} else {
+				currentFragment.invalidate();
+			}
+			populateTabs();
+		}
+
+		supportInvalidateOptionsMenu();
+	}
+
+	protected void recreateSpinner() {
+		if(currentFragment == null || currentFragment.getTitle() == null) {
+			return;
+		}
+		if(spinnerAdapter == null || getSupportActionBar().getCustomView() == null) {
+			createCustomActionBarView();
+		}
+
+		if(backStack.size() > 0) {
+			createCustomActionBarView();
+			spinnerAdapter.clear();
+			for(int i = 0; i < backStack.size(); i++) {
+				CharSequence title = backStack.get(i).getTitle();
+				if(title != null) {
+					spinnerAdapter.add(title);
+				} else {
+					spinnerAdapter.add("null");
+				}
+			}
+			if(currentFragment.getTitle() != null) {
+				spinnerAdapter.add(currentFragment.getTitle());
+			} else {
+				spinnerAdapter.add("null");
+			}
+			spinnerAdapter.notifyDataSetChanged();
+			actionBarSpinner.setSelection(spinnerAdapter.getCount() - 1);
+			if(!isTv()) {
+				getSupportActionBar().setDisplayShowTitleEnabled(false);
+				getSupportActionBar().setDisplayShowCustomEnabled(true);
+			}
+
+			if(drawerToggle.isDrawerIndicatorEnabled()) {
+				getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+				drawerToggle.setDrawerIndicatorEnabled(false);
+				getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+			}
+		} else if(!isTv()) {
+			getSupportActionBar().setDisplayShowTitleEnabled(true);
+			getSupportActionBar().setTitle(currentFragment.getTitle());
+			getSupportActionBar().setDisplayShowCustomEnabled(false);
+			drawerToggle.setDrawerIndicatorEnabled(true);
+		}
+	}
+
+	protected void restart() {
+		restart(true);
+	}
+	protected void restart(boolean resumePosition) {
+		Intent intent = new Intent(this, this.getClass());
+		intent.putExtras(getIntent());
+		if(resumePosition) {
+			intent.putExtra(Constants.FRAGMENT_POSITION, lastSelectedPosition);
+		} else {
+			String fragmentType = Util.openToTab(this);
+			intent.putExtra(Constants.INTENT_EXTRA_FRAGMENT_TYPE, fragmentType);
+			intent.putExtra(Constants.FRAGMENT_POSITION, getDrawerItemId(fragmentType));
+		}
+		finish();
+		Util.startActivityWithoutTransition(this, intent);
+	}
+
+	private void applyTheme() {
+		theme = ThemeUtil.getTheme(this);
+
+		if(theme != null && theme.indexOf("fullscreen") != -1) {
+			theme = theme.substring(0, theme.indexOf("_fullscreen"));
+			ThemeUtil.setTheme(this, theme);
+		}
+
+		ThemeUtil.applyTheme(this, theme);
+		actionbarColored = Util.getPreferences(this).getBoolean(Constants.PREFERENCES_KEY_COLOR_ACTION_BAR, true);
+	}
+	private void applyFullscreen() {
+		fullScreen = Util.getPreferences(this).getBoolean(Constants.PREFERENCES_KEY_FULL_SCREEN, false);
+		if(fullScreen || isTv()) {
+			int flags = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
+					View.SYSTEM_UI_FLAG_FULLSCREEN |
+					View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
+
+			getWindow().getDecorView().setSystemUiVisibility(flags);
+			getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+		}
+	}
+
+	public boolean isDestroyedCompat() {
+		return destroyed;
+	}
+
+	public synchronized ImageLoader getImageLoader() {
+		if (IMAGE_LOADER == null) {
+			IMAGE_LOADER = new ImageLoader(this);
+		}
+		return IMAGE_LOADER;
+	}
+	public synchronized static ImageLoader getStaticImageLoader(Context context) {
+		if (IMAGE_LOADER == null) {
+			IMAGE_LOADER = new ImageLoader(context);
+		}
+		return IMAGE_LOADER;
+	}
+
+	public DownloadService getDownloadService() {
+		if(finished) {
+			return null;
+		}
+
+		// If service is not available, request it to start and wait for it.
+		for (int i = 0; i < 5; i++) {
+			DownloadService downloadService = DownloadService.getInstance();
+			if (downloadService != null) {
+				break;
+			}
+			Log.w(TAG, "DownloadService not running. Attempting to start it.");
+			DownloadService.startService(this);
+			Util.sleepQuietly(50L);
+		}
+
+		final DownloadService downloadService = DownloadService.getInstance();
+		if(downloadService != null && afterServiceAvailable.size() > 0) {
+			for(Runnable runnable: afterServiceAvailable) {
+				handler.post(runnable);
+			}
+			afterServiceAvailable.clear();
+		}
+		return downloadService;
+	}
+	public void runWhenServiceAvailable(Runnable runnable) {
+		if(getDownloadService() != null) {
+			runnable.run();
+		} else {
+			afterServiceAvailable.add(runnable);
+			checkIfServiceAvailable();
+		}
+	}
+	private void checkIfServiceAvailable() {
+		if(getDownloadService() == null) {
+			handler.postDelayed(new Runnable() {
+				@Override
+				public void run() {
+					checkIfServiceAvailable();
+				}
+			}, 50);
+		} else if(afterServiceAvailable.size() > 0) {
+			for(Runnable runnable: afterServiceAvailable) {
+				handler.post(runnable);
+			}
+			afterServiceAvailable.clear();
+		}
+	}
+
+	public static String getThemeName() {
+		return theme;
+	}
+
+	public boolean isTv() {
+		return tv;
+	}
+	public boolean isTouchscreen() {
+		return touchscreen;
+	}
+
+	public void openNowPlaying() {
+
+	}
+	public void closeNowPlaying() {
+
+	}
+
+	public void setActiveServer(int instance) {
+		if (Util.getActiveServer(this) != instance) {
+			final DownloadService service = getDownloadService();
+			if (service != null) {
+				new SilentBackgroundTask<Void>(this) {
+					@Override
+					protected Void doInBackground() throws Throwable {
+						service.clearIncomplete();
+						return null;
+					}
+				}.execute();
+
+			}
+			Util.setActiveServer(this, instance);
+			invalidate();
+			UserUtil.refreshCurrentUser(this, false, true);
+			updateDrawerHeader();
+		}
+	}
+	public void updateDrawerHeader() {
+		if(Util.isOffline(this)) {
+			drawerServerName.setText(R.string.select_album_offline);
+			drawerUserName.setText("");
+			drawerUserAvatar.setVisibility(View.GONE);
+			drawerHeader.setClickable(false);
+			drawerHeaderToggle.setVisibility(View.GONE);
+		} else {
+			String username = UserUtil.getCurrentUsername(this);
+			drawerServerName.setText(Util.getServerName(this));
+			drawerUserName.setText(username);
+			drawerUserAvatar.setVisibility(View.VISIBLE);
+
+			// Plex signs in with a token and has no user to fetch, and asking for the
+			// avatar of nobody returns the stock blue figure - the last blue thing left
+			// in the drawer. The layout's own placeholder stands in instead.
+			if(username != null && !username.isEmpty()) {
+				getImageLoader().loadAvatar(this, drawerUserAvatar, username);
+			}
+			drawerHeader.setClickable(true);
+			drawerHeaderToggle.setVisibility(View.VISIBLE);
+		}
+	}
+
+	public void toggleOffline() {
+		boolean isOffline = Util.isOffline(this);
+		Util.setOffline(this, !isOffline);
+		invalidate();
+		DownloadService service = getDownloadService();
+		if (service != null) {
+			service.setOnline(isOffline);
+		}
+
+		// Coming back online
+		if(isOffline) {
+			int scrobblesCount = Util.offlineScrobblesCount(this);
+			int starsCount = Util.offlineStarsCount(this);
+			if(scrobblesCount > 0 || starsCount > 0){
+				showOfflineSyncDialog(scrobblesCount, starsCount);
+			}
+		}
+
+		UserUtil.seedCurrentUser(this);
+		this.updateDrawerHeader();
+		drawer.closeDrawers();
+	}
+
+	private void showOfflineSyncDialog(final int scrobbleCount, final int starsCount) {
+		String syncDefault = Util.getSyncDefault(this);
+		if(syncDefault != null) {
+			if("sync".equals(syncDefault)) {
+				syncOffline(scrobbleCount, starsCount);
+				return;
+			} else if("delete".equals(syncDefault)) {
+				deleteOffline();
+				return;
+			}
+		}
+
+		View checkBoxView = this.getLayoutInflater().inflate(R.layout.sync_dialog, null);
+		final CheckBox checkBox = (CheckBox)checkBoxView.findViewById(R.id.sync_default);
+
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setIcon(android.R.drawable.ic_dialog_info)
+				.setTitle(R.string.offline_sync_dialog_title)
+				.setMessage(this.getResources().getString(R.string.offline_sync_dialog_message, scrobbleCount, starsCount))
+				.setView(checkBoxView)
+				.setPositiveButton(R.string.common_ok, new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialogInterface, int i) {
+						if(checkBox.isChecked()) {
+							Util.setSyncDefault(SubsonicActivity.this, "sync");
+						}
+						syncOffline(scrobbleCount, starsCount);
+					}
+				}).setNeutralButton(R.string.common_cancel, new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialogInterface, int i) {
+				dialogInterface.dismiss();
+			}
+		}).setNegativeButton(R.string.common_delete, new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialogInterface, int i) {
+				if (checkBox.isChecked()) {
+					Util.setSyncDefault(SubsonicActivity.this, "delete");
+				}
+				deleteOffline();
+			}
+		});
+
+		builder.create().show();
+	}
+
+	private void syncOffline(final int scrobbleCount, final int starsCount) {
+		new SilentBackgroundTask<Integer>(this) {
+			@Override
+			protected Integer doInBackground() throws Throwable {
+				MusicService musicService = MusicServiceFactory.getMusicService(SubsonicActivity.this);
+				return musicService.processOfflineSyncs(SubsonicActivity.this, null);
+			}
+
+			@Override
+			protected void done(Integer result) {
+				if(result == scrobbleCount) {
+					Util.toast(SubsonicActivity.this, getResources().getString(R.string.offline_sync_success, result));
+				} else {
+					Util.toast(SubsonicActivity.this, getResources().getString(R.string.offline_sync_partial, result, scrobbleCount + starsCount));
+				}
+			}
+
+			@Override
+			protected void error(Throwable error) {
+				Log.w(TAG, "Failed to sync offline stats", error);
+				String msg = getResources().getString(R.string.offline_sync_error) + " " + getErrorMessage(error);
+				Util.toast(SubsonicActivity.this, msg);
+			}
+		}.execute();
+	}
+	private void deleteOffline() {
+		SharedPreferences.Editor offline = Util.getOfflineSync(this).edit();
+		offline.putInt(Constants.OFFLINE_SCROBBLE_COUNT, 0);
+		offline.putInt(Constants.OFFLINE_STAR_COUNT, 0);
+		offline.commit();
+	}
+	
+	public int getDrawerItemId(String fragmentType) {
+		if(fragmentType == null) {
+			return R.id.drawer_home;
+		}
+
+		switch(fragmentType) {
+			case "Home":
+				return R.id.drawer_home;
+			case "Artist":
+				return R.id.drawer_library;
+			case "Collection":
+				return R.id.drawer_collections;
+			case "Playlist":
+				return R.id.drawer_playlists;
+			case "Podcast":
+				return R.id.drawer_podcasts;
+			case "Bookmark":
+				return R.id.drawer_bookmarks;
+			case "Internet Radio":
+				return R.id.drawer_internet_radio_stations;
+			case "Share":
+				return R.id.drawer_shares;
+			case "Chat":
+				return R.id.drawer_chat;
+			case "Equalizer":
+				return R.id.drawer_equalizer;
+			default:
+				return R.id.drawer_home;
+		}
+	}
+
+	private void setUncaughtExceptionHandler() {
+		Thread.UncaughtExceptionHandler handler = Thread.getDefaultUncaughtExceptionHandler();
+		if (!(handler instanceof SubsonicActivity.SubsonicUncaughtExceptionHandler)) {
+			Thread.setDefaultUncaughtExceptionHandler(new SubsonicActivity.SubsonicUncaughtExceptionHandler(this));
+		}
+	}
+
+	/**
+	 * Logs the stack trace of uncaught exceptions to a file on the SD card.
+	 */
+	private static class SubsonicUncaughtExceptionHandler implements Thread.UncaughtExceptionHandler {
+
+		private final Thread.UncaughtExceptionHandler defaultHandler;
+		private final Context context;
+
+		private SubsonicUncaughtExceptionHandler(Context context) {
+			this.context = context;
+			defaultHandler = Thread.getDefaultUncaughtExceptionHandler();
+		}
+
+		@Override
+		public void uncaughtException(Thread thread, Throwable throwable) {
+			File file = null;
+			PrintWriter printWriter = null;
+			try {
+
+				PackageInfo packageInfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
+
+				// Scoped storage blocks writes to the external storage root from
+				// API 29, which silently broke crash reporting. The app-private
+				// external dir needs no permission and is still reachable over
+				// USB at Android/data/<package>/files/.
+				File dir = context.getExternalFilesDir(null);
+				if(dir == null) {
+					dir = context.getFilesDir();
+				}
+				file = new File(dir, "dsub-stacktrace.txt");
+				printWriter = new PrintWriter(file);
+				printWriter.println("Android API level: " + Build.VERSION.SDK);
+				printWriter.println("Subsonic version name: " + packageInfo.versionName);
+				printWriter.println("Subsonic version code: " + packageInfo.versionCode);
+				printWriter.println();
+				throwable.printStackTrace(printWriter);
+				Log.i(TAG, "Stack trace written to " + file);
+			} catch (Throwable x) {
+				Log.e(TAG, "Failed to write stack trace to " + file, x);
+			} finally {
+				Util.close(printWriter);
+				if (defaultHandler != null) {
+					defaultHandler.uncaughtException(thread, throwable);
+				}
+
+			}
+		}
+	}
+}
