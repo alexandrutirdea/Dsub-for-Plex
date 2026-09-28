@@ -25,6 +25,23 @@ android {
 		debug {
 			storeFile file('../debug.keystore')
 		}
+		// The release key never enters the repository: its location and passwords are read
+		// from a properties file kept beside it, outside the tree. The debug.keystore above is
+		// public, so anything handed to other people has to be signed with this one instead -
+		// an APK signed with a public key can be "updated" by anyone. Without the file the
+		// release build still builds, unsigned, so a clone can be built by anyone.
+		def signingFile = file(System.getenv('DSUB_SIGNING_PROPERTIES')
+				?: "${System.getProperty('user.home')}/.android-keys/dsub-for-plex-release.properties")
+		if(signingFile.exists()) {
+			def signing = new Properties()
+			signingFile.withInputStream { signing.load(it) }
+			release {
+				storeFile file(signing['storeFile'])
+				storePassword signing['storePassword']
+				keyAlias signing['keyAlias']
+				keyPassword signing['keyPassword']
+			}
+		}
 	}
 
 	buildTypes {
@@ -32,6 +49,7 @@ android {
 			signingConfig signingConfigs.debug
 		}
 		release {
+			signingConfig signingConfigs.findByName('release')
 			minifyEnabled true
 			shrinkResources true
 			proguardFiles 'proguard.cfg'
