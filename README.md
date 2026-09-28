@@ -109,7 +109,7 @@ Each carousel loads on its own, so a slow one doesn't hold up the screen. The "S
   <img src="docs/screenshots/library.jpg" width="250" alt="Library with artist pictures">
 </p>
 
-- **Album screens** lead with the cover at full resolution. The screen, toolbar and status bar take their colour from the cover. The header shows the **original release date and label**, **when you last listened to the album**, and (with the Dashboard) its **rating and which tracks you've loved on Last.fm**. Play and Add to Queue buttons sit under the header.
+- **Album screens** lead with the cover at full resolution. The screen, toolbar and status bar take their colour from the cover. The header shows the **original release date and label**, **when you last listened to the album**, and (with the [Plex Dashboard](https://github.com/alexandrutirdea/Plex-Dashboard)) its **rating and which tracks you've loved on Last.fm**. Play and Add to Queue buttons sit under the header.
 - **"Last listened" counts the album itself.** Hearing one song from an album in a mix doesn't mark the whole album as listened to.
 - **Track rows** don't repeat the album artist on every line, keep track numbers aligned, and mark downloaded tracks with a red cloud.
 - **Artist pages** have a header with the artist's picture and a grid of every release.
@@ -205,7 +205,7 @@ A rebuilt equalizer, reached from the drawer:
 
 ## Plex Dashboard integration (optional)
 
-Some features talk to a **Plex Dashboard**, a separate self-hosted companion service that tracks what Plex is playing and holds your Last.fm loves and album ratings. Set it up under **Settings → Playback → Plex Dashboard**:
+Some features talk to a **[Plex Dashboard](https://github.com/alexandrutirdea/Plex-Dashboard)**, a separate self-hosted companion service that tracks what Plex is playing and holds your Last.fm loves and album ratings. Set it up under **Settings → Playback → Plex Dashboard**:
 
 | Setting | Purpose |
 |---|---|
